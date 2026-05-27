@@ -7,6 +7,37 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBFmkbZDOD5SGcZn0N5_bRCkUfAK0I-aVg",
+    authDomain: "forte-rdo.firebaseapp.com",
+    projectId: "forte-rdo",
+    storageBucket: "forte-rdo.firebasestorage.app",
+    messagingSenderId: "1078788907049",
+    appId: "1:1078788907049:web:e2602060ee234791003c38"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Expor funções globais para o restante do script
+  window._fbLoad = async function(key) {
+    try {
+      const snap = await getDoc(doc(db, 'forte_data', key));
+      return snap.exists() ? snap.data() : null;
+    } catch(e) { console.warn('fbLoad error', e); return null; }
+  };
+
+  window._fbSave = async function(key, data) {
+    try {
+      await setDoc(doc(db, 'forte_data', key), data);
+    } catch(e) { console.warn('fbSave error', e); }
+  };
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -772,9 +803,11 @@ const SEED = {
 ═══════════════════════════════════════════════════ */
 async function loadData(){
   try{
-    const r=await window.storage.get('forte_v2');
-    if(r&&r.value){
-      const d=JSON.parse(r.value);
+    // Aguarda o Firebase inicializar
+    let tries=0;
+    while(!window._fbLoad&&tries<20){await new Promise(r=>setTimeout(r,100));tries++;}
+    const d=await window._fbLoad('forte_v2');
+    if(d&&d.contracts){
       S.contracts=d.contracts||[...SEED.contracts];
       S.items=d.items||[...SEED.items];
       S.bols=d.bols||[...SEED.bols];
@@ -792,9 +825,11 @@ async function loadData(){
 
 async function persist(){
   try{
-    await window.storage.set('forte_v2',JSON.stringify({
-      contracts:S.contracts,items:S.items,bols:S.bols,prods:S.prods,priceHistory:S.priceHistory
-    }));
+    if(window._fbSave){
+      await window._fbSave('forte_v2',{
+        contracts:S.contracts,items:S.items,bols:S.bols,prods:S.prods,priceHistory:S.priceHistory
+      });
+    }
   }catch(e){console.warn('storage error',e)}
 }
 
