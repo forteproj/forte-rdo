@@ -4,58 +4,44 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FORTE · RDO V2</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
+:root{
+  --ds-font:'Montserrat',sans-serif;--ds-mono:'Montserrat',sans-serif;
+  --ds-or:#F5A623;--ds-ord:#D4841A;--ds-or-light:#FFF3DC;
+  --ds-dark:#1E1C18;--ds-dark2:#252320;--ds-dark3:#2C2A26;--ds-dark4:#383530;--ds-dark5:#4A4845;
+  --ds-bg:#F4F4F0;--ds-bg2:#ECEAE4;--ds-bg3:#E2DFD8;--ds-bg4:#D8D5CE;--ds-wh:#FFFFFF;
+  --ds-bd:#E2E0D8;--ds-bd2:#C8C5BE;--ds-bd3:#AEA9A0;
+  --ds-tx:#1A1916;--ds-tx2:#5A5852;--ds-tx3:#908D86;--ds-fv:#ECEAE4;
+  --ds-grn:#2D7D46;--ds-grn-l:#E6F4EB;--ds-grn-bg:rgba(45,125,70,0.12);--ds-grn-bd:rgba(45,125,70,0.3);
+  --ds-red:#C0392B;--ds-red-l:#FDECEA;--ds-red-bg:rgba(192,57,43,0.12);--ds-red-bd:rgba(192,57,43,0.3);
+  --ds-blu:#2E6DA4;--ds-blu-l:#E8F2FB;--ds-blu-bg:rgba(46,109,164,0.12);--ds-blu-bd:rgba(46,109,164,0.3);
+  --ds-ylw:#B8860B;--ds-ylw-l:#FEF3DC;--ds-ylw-bg:rgba(184,134,11,0.12);--ds-ylw-bd:rgba(184,134,11,0.3);
+  --ds-roxo:#6B46C1;--ds-roxo-l:#EDE9FE;
+  --ds-r:10px;--ds-r-sm:6px;--ds-r-lg:14px;
+  --ds-sh:0 2px 8px rgba(0,0,0,.08);--ds-sh2:0 4px 16px rgba(0,0,0,.1);--ds-sh3:0 20px 60px rgba(0,0,0,.25);
+}
+</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBFmkbZDOD5SGcZn0N5_bRCkUfAK0I-aVg",
-    authDomain: "forte-rdo.firebaseapp.com",
-    projectId: "forte-rdo",
-    storageBucket: "forte-rdo.firebasestorage.app",
-    messagingSenderId: "1078788907049",
-    appId: "1:1078788907049:web:e2602060ee234791003c38"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // Expor funções globais para o restante do script
-  window._fbLoad = async function(key) {
-    try {
-      const snap = await getDoc(doc(db, 'forte_data', key));
-      return snap.exists() ? snap.data() : null;
-    } catch(e) { console.warn('fbLoad error', e); return null; }
-  };
-
-  window._fbSave = async function(key, data) {
-    try {
-      await setDoc(doc(db, 'forte_data', key), data);
-    } catch(e) { console.warn('fbSave error', e); }
-  };
-</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --or:#F5A623;--ord:#D4841A;--or-light:#FFF3DC;
-  --sb:#111827;--sb2:#1F2937;--sb3:#374151;
-  --tx:#111827;--tx2:#4B5563;--tx3:#9CA3AF;
-  --bd:#E5E7EB;--bd2:#F3F4F6;--bg:#F9FAFB;
-  --wh:#FFFFFF;
-  --grn:#059669;--grn-l:#D1FAE5;
-  --red:#DC2626;--red-l:#FEE2E2;
-  --blu:#2563EB;--blu-l:#DBEAFE;
-  --ylw:#D97706;--ylw-l:#FEF3C7;
-  --r:10px;--r2:6px;
-  --sh:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
-  --sh2:0 4px 16px rgba(0,0,0,.1);
-  --sh3:0 20px 60px rgba(0,0,0,.25);
-  --font:'Plus Jakarta Sans',sans-serif;
-  --mono:'JetBrains Mono',monospace;
+  --or:var(--ds-or);--ord:var(--ds-ord);--or-light:var(--ds-or-light);
+  --sb:var(--ds-dark);--sb2:var(--ds-dark2);--sb3:var(--ds-dark3);
+  --tx:var(--ds-tx);--tx2:var(--ds-tx2);--tx3:var(--ds-tx3);
+  --bd:var(--ds-bd);--bd2:var(--ds-bg);--bg:var(--ds-bg2);
+  --wh:var(--ds-wh);
+  --grn:var(--ds-grn);--grn-l:var(--ds-grn-l);
+  --red:var(--ds-red);--red-l:var(--ds-red-l);
+  --blu:var(--ds-blu);--blu-l:var(--ds-blu-l);
+  --ylw:var(--ds-ylw);--ylw-l:var(--ds-ylw-l);
+  --r:var(--ds-r);--r2:var(--ds-r-sm);
+  --sh:var(--ds-sh);
+  --sh2:var(--ds-sh2);
+  --sh3:var(--ds-sh3);
+  --font:var(--ds-font);
+  --mono:var(--ds-mono);
   --transition:.2s ease;
   --bg1:var(--wh);--bg2:var(--bd2);--tx1:var(--tx);
 }
@@ -69,40 +55,40 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 /* ══════════════════════════════════════════
    LOGIN
 ══════════════════════════════════════════ */
-#login-screen{
-  position:fixed;inset:0;z-index:999;
-  background:var(--sb);
-  display:flex;align-items:center;justify-content:center;
-  background-image:
-    radial-gradient(circle at 20% 20%,rgba(245,166,35,.12) 0%,transparent 50%),
-    radial-gradient(circle at 80% 80%,rgba(245,166,35,.08) 0%,transparent 50%);
-}
-.lc{
-  background:var(--wh);border-radius:20px;padding:44px 40px;width:420px;
-  box-shadow:var(--sh3);
-  animation:slideUp .4s ease;
-}
-@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-.lc-brand{display:flex;align-items:center;gap:14px;margin-bottom:8px;justify-content:center}
-.lc-icon{
-  width:52px;height:52px;background:var(--or);border-radius:14px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:24px;font-weight:900;color:white;letter-spacing:-1px;
-  box-shadow:0 4px 14px rgba(245,166,35,.4);
-}
-.lc-name{font-size:24px;font-weight:900;color:var(--sb);letter-spacing:-0.5px}
-.lc-name em{color:var(--or);font-style:normal}
-.lc-sub{text-align:center;color:var(--tx3);font-size:12px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;margin-bottom:28px}
-.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
-.role-card{
-  border:2px solid var(--bd);border-radius:12px;padding:18px 14px;
-  text-align:center;cursor:pointer;transition:all var(--transition);
-}
-.role-card:hover{border-color:var(--or);background:var(--or-light)}
-.role-card.sel{border-color:var(--or);background:var(--or-light);box-shadow:0 0 0 3px rgba(245,166,35,.15)}
-.role-card .ri{font-size:28px;margin-bottom:8px}
-.role-card .rn{font-size:13px;font-weight:700;color:var(--tx)}
-.role-card .rd{font-size:11px;color:var(--tx3);margin-top:3px}
+#login-screen{position:fixed;inset:0;display:flex;z-index:999;}
+.ln-esq{width:50%;background:var(--ds-dark);position:relative;display:flex;flex-direction:column;padding:48px 52px;overflow:hidden;}
+.ln-grade{position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.05) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;}
+.ln-brilho{position:absolute;top:-120px;right:-80px;width:460px;height:460px;background:radial-gradient(circle,rgba(245,166,35,.12) 0%,transparent 65%);pointer-events:none;}
+.ln-logo{position:relative;z-index:1;margin-bottom:40px;}
+.ln-logo-tag{font-size:10px;font-weight:800;letter-spacing:5px;text-transform:uppercase;color:var(--ds-dark5);margin-bottom:14px;}
+.ln-logo-l1{font-family:var(--ds-font);font-size:52px;font-weight:900;line-height:.9;color:var(--ds-wh);text-transform:uppercase;letter-spacing:-1px;}
+.ln-logo-l2{font-family:var(--ds-font);font-size:52px;font-weight:900;line-height:.9;color:var(--ds-or);text-transform:uppercase;letter-spacing:-1px;margin-bottom:16px;}
+.ln-logo-l3{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ds-dark5);border-top:1px solid var(--ds-dark4);padding-top:14px;margin-top:16px;}
+.ln-niv-lbl{font-size:9px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(--ds-dark5);margin-bottom:12px;position:relative;z-index:1;}
+.ln-niv-card{position:relative;z-index:1;background:var(--ds-dark2);border:1px solid var(--ds-dark4);border-left:3px solid var(--ds-or);border-radius:var(--ds-r-sm);padding:12px 16px;margin-bottom:8px;}
+.ln-niv-card h4{font-size:11px;font-weight:800;color:var(--ds-wh);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px;}
+.ln-niv-card p{font-size:11px;color:var(--ds-dark5);line-height:1.5;}
+.ln-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:2px;letter-spacing:.5px;text-transform:uppercase;margin-top:6px;margin-right:4px;background:var(--ds-or-light);color:var(--ds-ord);}
+.ln-rod{position:relative;z-index:1;margin-top:auto;font-size:10px;color:var(--ds-dark5);border-top:1px solid var(--ds-dark4);padding-top:16px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
+.ln-dir{width:50%;background:var(--ds-bg);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:48px 52px;border-left:1px solid var(--ds-bd);}
+.ln-form{width:100%;max-width:360px;}
+.ln-titulo{font-family:var(--ds-font);font-size:20px;font-weight:800;color:var(--ds-tx);margin-bottom:4px;letter-spacing:.04em;text-transform:uppercase;}
+.ln-sub{font-size:11px;color:var(--ds-tx3);margin-bottom:28px;font-weight:500;letter-spacing:.04em;}
+.ln-campo{margin-bottom:14px;}
+.ln-lbl{display:block;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--ds-tx3);margin-bottom:6px;}
+.ln-input{width:100%;height:40px;padding:0 12px;background:var(--ds-wh);border:1px solid var(--ds-bd);border-radius:var(--ds-r-sm);font-family:var(--ds-font);font-size:13px;color:var(--ds-tx);outline:none;transition:border-color .15s;}
+.ln-input:focus{border-color:var(--ds-or);box-shadow:0 0 0 3px var(--ds-or-light);}
+.ln-btn{width:100%;height:42px;background:var(--ds-dark);color:var(--ds-wh);border:none;border-radius:var(--ds-r-sm);font-family:var(--ds-font);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s;margin-top:8px;}
+.ln-btn:hover{background:var(--ds-dark2);}
+.ln-btn:active{transform:scale(.99);}
+.ln-role-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.ln-role-card{border:2px solid var(--ds-bd);border-radius:var(--ds-r-sm);padding:16px 12px;text-align:center;cursor:pointer;transition:all .15s;background:var(--ds-wh);}
+.ln-role-card:hover,.ln-role-card.sel{border-color:var(--ds-or);background:var(--ds-or-light);}
+.ln-role-card.sel{box-shadow:0 0 0 3px rgba(245,166,35,.15);}
+.ln-ri{font-size:26px;margin-bottom:6px;}
+.ln-rn{font-size:12px;font-weight:700;color:var(--ds-tx);}
+.ln-rd{font-size:10px;color:var(--ds-tx3);margin-top:2px;}
+@media(max-width:768px){.ln-esq{display:none;}.ln-dir{width:100%;}}
 .fg{margin-bottom:14px}
 .fg label{display:block;font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
 input,select,textarea{
@@ -406,31 +392,50 @@ tr.row td:last-child{padding-right:12px}
 
 <!-- ─────────────── LOGIN ─────────────── -->
 <div id="login-screen">
-  <div class="lc">
-    <div class="lc-brand">
-      <div class="lc-icon">F</div>
-      <div>
-        <div class="lc-name">FORTE · <em>RDO</em></div>
-      </div>
+  <div class="ln-esq">
+    <div class="ln-grade"></div>
+    <div class="ln-brilho"></div>
+    <div class="ln-logo">
+      <div class="ln-logo-tag">Sistema Forte</div>
+      <div class="ln-logo-l1">FORTE</div>
+      <div class="ln-logo-l2">RDO</div>
+      <div class="ln-logo-l3">Relatório Diário de Obra</div>
     </div>
-    <p class="lc-sub">Relatório Diário de Obra · V2</p>
-    <div class="role-grid">
-      <div class="role-card sel" id="rc-adm" onclick="selRole('adm')">
-        <div class="ri">👑</div>
-        <div class="rn">Administrador</div>
-        <div class="rd">Acesso total ao sistema</div>
-      </div>
-      <div class="role-card" id="rc-enc" onclick="selRole('enc')">
-        <div class="ri">👷</div>
-        <div class="rn">Encarregado</div>
-        <div class="rd">Registro de produção</div>
-      </div>
+    <div class="ln-niv-lbl">Perfis de Acesso</div>
+    <div class="ln-niv-card">
+      <h4>Administrador</h4>
+      <p>Acesso total ao sistema</p>
+      <span class="ln-badge">Contratos</span><span class="ln-badge">Boletins</span><span class="ln-badge">Gestão</span>
     </div>
-    <div class="fg">
-      <label>Seu Nome</label>
-      <input type="text" id="li-name" placeholder="Digite seu nome..." value="Admin" />
+    <div class="ln-niv-card" style="border-left-color:var(--ds-blu)">
+      <h4>Encarregado</h4>
+      <p>Registro de produção</p>
+      <span class="ln-badge">Apontamentos</span><span class="ln-badge">Equipe</span>
     </div>
-    <button class="btn btn-or btn-full" onclick="doLogin()">Entrar no Sistema →</button>
+    <div class="ln-rod">ECCOFORTE &copy; 2026</div>
+  </div>
+  <div class="ln-dir">
+    <div class="ln-form">
+      <div class="ln-titulo">Entrar no Sistema</div>
+      <div class="ln-sub">Selecione seu perfil e insira seu nome</div>
+      <div class="ln-role-grid">
+        <div class="ln-role-card role-card sel" id="rc-adm" onclick="selRole('adm')">
+          <div class="ln-ri">👑</div>
+          <div class="ln-rn">Administrador</div>
+          <div class="ln-rd">Acesso total</div>
+        </div>
+        <div class="ln-role-card role-card" id="rc-enc" onclick="selRole('enc')">
+          <div class="ln-ri">👷</div>
+          <div class="ln-rn">Encarregado</div>
+          <div class="ln-rd">Produção</div>
+        </div>
+      </div>
+      <div class="ln-campo">
+        <label class="ln-lbl" for="li-name">Seu Nome</label>
+        <input class="ln-input" type="text" id="li-name" placeholder="Digite seu nome..." value="Admin" />
+      </div>
+      <button class="ln-btn" onclick="doLogin()">Entrar no Sistema</button>
+    </div>
   </div>
 </div>
 
@@ -803,11 +808,9 @@ const SEED = {
 ═══════════════════════════════════════════════════ */
 async function loadData(){
   try{
-    // Aguarda o Firebase inicializar
-    let tries=0;
-    while(!window._fbLoad&&tries<20){await new Promise(r=>setTimeout(r,100));tries++;}
-    const d=await window._fbLoad('forte_v2');
-    if(d&&d.contracts){
+    const r=await window.storage.get('forte_v2');
+    if(r&&r.value){
+      const d=JSON.parse(r.value);
       S.contracts=d.contracts||[...SEED.contracts];
       S.items=d.items||[...SEED.items];
       S.bols=d.bols||[...SEED.bols];
@@ -825,11 +828,9 @@ async function loadData(){
 
 async function persist(){
   try{
-    if(window._fbSave){
-      await window._fbSave('forte_v2',{
-        contracts:S.contracts,items:S.items,bols:S.bols,prods:S.prods,priceHistory:S.priceHistory
-      });
-    }
+    await window.storage.set('forte_v2',JSON.stringify({
+      contracts:S.contracts,items:S.items,bols:S.bols,prods:S.prods,priceHistory:S.priceHistory
+    }));
   }catch(e){console.warn('storage error',e)}
 }
 
