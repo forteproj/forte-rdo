@@ -81,13 +81,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 .ln-btn{width:100%;height:42px;background:var(--ds-dark);color:var(--ds-wh);border:none;border-radius:var(--ds-r-sm);font-family:var(--ds-font);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s;margin-top:8px;}
 .ln-btn:hover{background:var(--ds-dark2);}
 .ln-btn:active{transform:scale(.99);}
-.ln-role-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
-.ln-role-card{border:2px solid var(--ds-bd);border-radius:var(--ds-r-sm);padding:16px 12px;text-align:center;cursor:pointer;transition:all .15s;background:var(--ds-wh);}
-.ln-role-card:hover,.ln-role-card.sel{border-color:var(--ds-or);background:var(--ds-or-light);}
-.ln-role-card.sel{box-shadow:0 0 0 3px rgba(245,166,35,.15);}
-.ln-ri{font-size:26px;margin-bottom:6px;}
-.ln-rn{font-size:12px;font-weight:700;color:var(--ds-tx);}
-.ln-rd{font-size:10px;color:var(--ds-tx3);margin-top:2px;}
+.ln-abas{display:flex;background:var(--ds-bg3);border:1px solid var(--ds-bd);border-radius:var(--ds-r-sm);padding:3px;margin-bottom:24px;}
+.ln-aba{flex:1;padding:8px 10px;background:none;border:none;border-radius:3px;font-family:var(--ds-font);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ds-tx3);cursor:pointer;transition:all .15s;}
+.ln-aba.sel{background:var(--ds-dark);color:var(--ds-or);}
 @media(max-width:768px){.ln-esq{display:none;}.ln-dir{width:100%;}}
 .fg{margin-bottom:14px}
 .fg label{display:block;font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
@@ -418,17 +414,9 @@ tr.row td:last-child{padding-right:12px}
     <div class="ln-form">
       <div class="ln-titulo">Entrar no Sistema</div>
       <div class="ln-sub">Selecione seu perfil e insira seu nome</div>
-      <div class="ln-role-grid">
-        <div class="ln-role-card role-card sel" id="rc-adm" onclick="selRole('adm')">
-          <div class="ln-ri">👑</div>
-          <div class="ln-rn">Administrador</div>
-          <div class="ln-rd">Acesso total</div>
-        </div>
-        <div class="ln-role-card role-card" id="rc-enc" onclick="selRole('enc')">
-          <div class="ln-ri">👷</div>
-          <div class="ln-rn">Encarregado</div>
-          <div class="ln-rd">Produção</div>
-        </div>
+      <div class="ln-abas">
+        <button class="ln-aba role-card sel" id="rc-adm" onclick="selRole('adm')">Administrador</button>
+        <button class="ln-aba role-card" id="rc-enc" onclick="selRole('enc')">Encarregado</button>
       </div>
       <div class="ln-campo">
         <label class="ln-lbl" for="li-name">Seu Nome</label>
