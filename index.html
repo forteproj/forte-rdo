@@ -415,19 +415,17 @@ tr.row td:last-child{padding-right:12px}
   <div class="ln-dir">
     <div class="ln-form">
       <div class="ln-titulo">Entrar no Sistema</div>
-      <div class="ln-sub">Selecione seu perfil e insira seu nome</div>
+      <div class="ln-sub">Insira seu nome para acessar o sistema</div>
       <div class="ln-abas" id="ln-tabs-main">
         <button class="ln-aba sel" data-aba="login" onclick="trocaAba('login')">Já Tenho Acesso</button>
         <button class="ln-aba" data-aba="reset" onclick="trocaAba('reset')">Redefinir Senha</button>
       </div>
       <div id="ln-painel-login">
-        <div class="ln-abas">
-          <button class="ln-aba role-card sel" id="rc-adm" onclick="selRole('adm')">Administrador</button>
-          <button class="ln-aba role-card" id="rc-enc" onclick="selRole('enc')">Encarregado</button>
-        </div>
+        <button id="rc-adm" class="role-card sel" style="display:none"></button>
+        <button id="rc-enc" class="role-card" style="display:none"></button>
         <div class="ln-campo">
           <label class="ln-lbl" for="li-name">Seu Nome</label>
-          <input class="ln-input" type="text" id="li-name" placeholder="Digite seu nome..." value="Admin" />
+          <input class="ln-input" type="text" id="li-name" placeholder="Digite seu nome..." />
         </div>
         <button class="ln-btn" onclick="doLogin()">Entrar no Sistema</button>
       </div>
