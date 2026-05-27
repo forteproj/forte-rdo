@@ -84,6 +84,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 .ln-abas{display:flex;background:var(--ds-bg3);border:1px solid var(--ds-bd);border-radius:var(--ds-r-sm);padding:3px;margin-bottom:24px;}
 .ln-aba{flex:1;padding:8px 10px;background:none;border:none;border-radius:3px;font-family:var(--ds-font);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ds-tx3);cursor:pointer;transition:all .15s;}
 .ln-aba.sel{background:var(--ds-dark);color:var(--ds-or);}
+.ln-reset-msg{background:var(--ds-bg2);border:1px solid var(--ds-bd);border-radius:var(--ds-r-sm);padding:14px 16px;font-size:12px;color:var(--ds-tx2);line-height:1.6;}
+.ln-reset-msg strong{display:block;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--ds-tx);margin-bottom:6px;}
 @media(max-width:768px){.ln-esq{display:none;}.ln-dir{width:100%;}}
 .fg{margin-bottom:14px}
 .fg label{display:block;font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
@@ -414,15 +416,27 @@ tr.row td:last-child{padding-right:12px}
     <div class="ln-form">
       <div class="ln-titulo">Entrar no Sistema</div>
       <div class="ln-sub">Selecione seu perfil e insira seu nome</div>
-      <div class="ln-abas">
-        <button class="ln-aba role-card sel" id="rc-adm" onclick="selRole('adm')">Administrador</button>
-        <button class="ln-aba role-card" id="rc-enc" onclick="selRole('enc')">Encarregado</button>
+      <div class="ln-abas" id="ln-tabs-main">
+        <button class="ln-aba sel" data-aba="login" onclick="trocaAba('login')">Já Tenho Acesso</button>
+        <button class="ln-aba" data-aba="reset" onclick="trocaAba('reset')">Redefinir Senha</button>
       </div>
-      <div class="ln-campo">
-        <label class="ln-lbl" for="li-name">Seu Nome</label>
-        <input class="ln-input" type="text" id="li-name" placeholder="Digite seu nome..." value="Admin" />
+      <div id="ln-painel-login">
+        <div class="ln-abas">
+          <button class="ln-aba role-card sel" id="rc-adm" onclick="selRole('adm')">Administrador</button>
+          <button class="ln-aba role-card" id="rc-enc" onclick="selRole('enc')">Encarregado</button>
+        </div>
+        <div class="ln-campo">
+          <label class="ln-lbl" for="li-name">Seu Nome</label>
+          <input class="ln-input" type="text" id="li-name" placeholder="Digite seu nome..." value="Admin" />
+        </div>
+        <button class="ln-btn" onclick="doLogin()">Entrar no Sistema</button>
       </div>
-      <button class="ln-btn" onclick="doLogin()">Entrar no Sistema</button>
+      <div id="ln-painel-reset" style="display:none">
+        <div class="ln-reset-msg">
+          <strong>Redefinir Acesso</strong>
+          Para redefinir seu acesso ao sistema, entre em contato com o administrador.
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -863,6 +877,12 @@ function calcHoras(a,b){
 /* ═══════════════════════════════════════════════════
    AUTH
 ═══════════════════════════════════════════════════ */
+function trocaAba(aba) {
+  document.querySelectorAll('#ln-tabs-main .ln-aba').forEach(function(b){ b.classList.remove('sel'); });
+  document.querySelector('#ln-tabs-main [data-aba="'+aba+'"]').classList.add('sel');
+  document.getElementById('ln-painel-login').style.display = aba === 'login' ? '' : 'none';
+  document.getElementById('ln-painel-reset').style.display = aba === 'reset' ? '' : 'none';
+}
 function selRole(r){
   document.getElementById('rc-adm').classList.toggle('sel',r==='adm');
   document.getElementById('rc-enc').classList.toggle('sel',r==='enc');
