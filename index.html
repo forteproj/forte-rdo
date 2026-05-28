@@ -999,22 +999,24 @@ var authSec = firebase.initializeApp(firebaseConfig, 'sec').auth();
 var USUARIOS = db.collection('usuarios');
 var currentPerfil = null;
 
-// ─── FORTE-APONTAMENTOS (sync de obras e registros) ──────────────────────────
-var dbAp = firebase.initializeApp({
-  apiKey:'AIzaSyDJXoX-s1kD7JGLk4NATAelZzWc6m_old8',
-  authDomain:'forte-apontamentos.firebaseapp.com',
-  projectId:'forte-apontamentos',
-  storageBucket:'forte-apontamentos.firebasestorage.app',
-  messagingSenderId:'406199226933',
-  appId:'1:406199226933:web:7fea97aa201d76170c977c'
-},'ap').firestore();
+// ─── FORTE-APONTAMENTOS (sync via REST API) ──────────────────────────────────
+const _AP_URL='https://firestore.googleapis.com/v1/projects/forte-apontamentos/databases/(default)/documents/dados/';
 
 async function _apRead(key){
-  try{const s=await dbAp.collection('dados').doc(key).get();return s.exists?JSON.parse(s.data().valor):[];}
-  catch(e){return[];}
+  try{
+    const r=await fetch(_AP_URL+key);
+    if(!r.ok)return[];
+    const d=await r.json();
+    return JSON.parse(d.fields?.valor?.stringValue||'[]');
+  }catch(e){return[];}
 }
 async function _apWrite(key,lista){
-  await dbAp.collection('dados').doc(key).set({valor:JSON.stringify(lista)});
+  const r=await fetch(_AP_URL+key+'?updateMask.fieldPaths=valor',{
+    method:'PATCH',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({fields:{valor:{stringValue:JSON.stringify(lista)}}})
+  });
+  if(!r.ok){const t=await r.text();throw new Error(r.status+': '+t.slice(0,120));}
 }
 async function _syncObraToAp(c,del=false){
   const obras=await _apRead('obras');
