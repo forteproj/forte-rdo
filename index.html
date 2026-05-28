@@ -24,6 +24,9 @@
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -55,37 +58,46 @@ body{font-family:var(--font);background:var(--bg);color:var(--tx);height:100vh;o
 /* ══════════════════════════════════════════
    LOGIN
 ══════════════════════════════════════════ */
-#login-screen{position:fixed;inset:0;display:flex;z-index:999;}
-.ln-esq{width:50%;background:var(--ds-dark);position:relative;display:flex;flex-direction:column;padding:48px 52px;overflow:hidden;}
-.ln-grade{position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.05) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;}
-.ln-brilho{position:absolute;top:-120px;right:-80px;width:460px;height:460px;background:radial-gradient(circle,rgba(245,166,35,.12) 0%,transparent 65%);pointer-events:none;}
-.ln-logo{position:relative;z-index:1;margin-bottom:40px;}
-.ln-logo-tag{font-size:10px;font-weight:800;letter-spacing:5px;text-transform:uppercase;color:var(--ds-dark5);margin-bottom:14px;}
-.ln-logo-l1{font-family:var(--ds-font);font-size:52px;font-weight:900;line-height:.9;color:var(--ds-wh);text-transform:uppercase;letter-spacing:-1px;}
-.ln-logo-l2{font-family:var(--ds-font);font-size:52px;font-weight:900;line-height:.9;color:var(--ds-or);text-transform:uppercase;letter-spacing:-1px;margin-bottom:16px;}
+#login-screen{position:fixed;inset:0;display:flex;z-index:999;--ds-or:var(--ds-ord);--ds-r:4px;--ds-bd:var(--ds-bd2);line-height:normal;}
+.ln-esq{width:52%;background:var(--ds-dark);position:relative;display:flex;flex-direction:column;padding:48px 52px;overflow:hidden;}
+.ln-grade{position:absolute;inset:0;background-image:linear-gradient(rgba(245,166,35,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,.06) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;}
+.ln-brilho{position:absolute;top:-140px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(245,166,35,.14) 0%,transparent 65%);pointer-events:none;}
+.ln-linha-amb{position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ds-or);}
+.ln-logo{position:relative;z-index:1;margin-bottom:48px;}
+.ln-logo-tag{font-size:10px;font-weight:800;letter-spacing:5px;text-transform:uppercase;color:var(--ds-or);margin-bottom:14px;}
+.ln-logo-l1{font-family:var(--ds-font);font-size:52px;font-weight:800;line-height:.92;color:var(--ds-wh);text-transform:uppercase;letter-spacing:-1px;}
 .ln-logo-l3{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ds-dark5);border-top:1px solid var(--ds-dark4);padding-top:14px;margin-top:16px;}
 .ln-niv-lbl{font-size:9px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(--ds-dark5);margin-bottom:12px;position:relative;z-index:1;}
-.ln-niv-card{position:relative;z-index:1;background:var(--ds-dark2);border:1px solid var(--ds-dark4);border-left:3px solid var(--ds-or);border-radius:var(--ds-r-sm);padding:12px 16px;margin-bottom:8px;}
-.ln-niv-card h4{font-size:11px;font-weight:800;color:var(--ds-wh);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px;}
+.ln-niv-card{position:relative;z-index:1;background:var(--ds-dark2);border:1px solid var(--ds-dark4);border-left:3px solid transparent;border-radius:var(--ds-r);padding:14px 18px;margin-bottom:8px;}
+.ln-niv-card h4{font-size:12px;font-weight:800;color:var(--ds-wh);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px;}
 .ln-niv-card p{font-size:11px;color:var(--ds-dark5);line-height:1.5;}
-.ln-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:2px;letter-spacing:.5px;text-transform:uppercase;margin-top:6px;margin-right:4px;background:var(--ds-or-light);color:var(--ds-ord);}
-.ln-rod{position:relative;z-index:1;margin-top:auto;font-size:10px;color:var(--ds-dark5);border-top:1px solid var(--ds-dark4);padding-top:16px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
-.ln-dir{width:50%;background:var(--ds-bg);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:48px 52px;border-left:1px solid var(--ds-bd);}
+.ln-badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+.ln-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:2px;letter-spacing:.5px;text-transform:uppercase;background:rgba(245,166,35,.18);color:var(--ds-or);}
+.ln-badge-nao{font-size:9px;font-weight:700;padding:2px 7px;border-radius:2px;letter-spacing:.5px;text-transform:uppercase;background:var(--ds-dark3);color:var(--ds-dark5);text-decoration:line-through;}
+.ln-rod{position:relative;z-index:1;margin-top:auto;font-size:10px;color:var(--ds-dark5);border-top:1px solid var(--ds-dark4);padding-top:18px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;display:flex;justify-content:space-between;}
+.ln-dir{width:48%;background:var(--ds-bg);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:48px 52px;border-left:1px solid var(--ds-bd);}
 .ln-form{width:100%;max-width:360px;}
-.ln-titulo{font-family:var(--ds-font);font-size:20px;font-weight:800;color:var(--ds-tx);margin-bottom:4px;letter-spacing:.04em;text-transform:uppercase;}
-.ln-sub{font-size:11px;color:var(--ds-tx3);margin-bottom:28px;font-weight:500;letter-spacing:.04em;}
+.ln-titulo{font-family:var(--ds-font);font-size:20px;font-weight:800;color:var(--ds-tx);margin-bottom:20px;letter-spacing:.04em;text-transform:uppercase;text-align:center;}
 .ln-campo{margin-bottom:14px;}
-.ln-lbl{display:block;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--ds-tx3);margin-bottom:6px;}
-.ln-input{width:100%;height:40px;padding:0 12px;background:var(--ds-wh);border:1px solid var(--ds-bd);border-radius:var(--ds-r-sm);font-family:var(--ds-font);font-size:13px;color:var(--ds-tx);outline:none;transition:border-color .15s;}
-.ln-input:focus{border-color:var(--ds-or);box-shadow:0 0 0 3px var(--ds-or-light);}
-.ln-btn{width:100%;height:42px;background:var(--ds-dark);color:var(--ds-wh);border:none;border-radius:var(--ds-r-sm);font-family:var(--ds-font);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .15s;margin-top:8px;}
+.ln-lbl{display:block;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ds-tx2);margin-bottom:5px;}
+.ln-input{width:100%;height:auto;padding:9px 12px;background:var(--ds-wh);border:1px solid var(--ds-bd);border-radius:var(--ds-r);font-family:var(--ds-font);font-size:12px;font-weight:500;color:var(--ds-tx);outline:none;transition:border-color .15s,background .15s;}
+.ln-input:focus{border-color:var(--ds-or);background:var(--ds-or-light);}
+.ln-input::placeholder{color:var(--ds-bd2);}
+.login-err{font-family:var(--ds-font);font-size:11px;color:var(--ds-red);letter-spacing:.04em;font-weight:600;}
+.login-err:not(:empty){margin-bottom:12px;}
+.ln-campo-senha{position:relative;}
+.ln-campo-senha .ln-input{padding-right:40px;}
+.ln-olho{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--ds-bd2);font-size:14px;padding:4px;transition:color .15s;}
+.ln-olho:hover{color:var(--ds-tx);}
+.ln-btn{width:100%;padding:11px;background:var(--ds-dark);color:var(--ds-or);border:none;border-bottom:3px solid var(--ds-or);border-radius:var(--ds-r);font-family:var(--ds-font);font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .15s,transform .1s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;}
 .ln-btn:hover{background:var(--ds-dark2);}
 .ln-btn:active{transform:scale(.99);}
-.ln-abas{display:flex;background:var(--ds-bg3);border:1px solid var(--ds-bd);border-radius:var(--ds-r-sm);padding:3px;margin-bottom:24px;}
-.ln-aba{flex:1;padding:8px 10px;background:none;border:none;border-radius:3px;font-family:var(--ds-font);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ds-tx3);cursor:pointer;transition:all .15s;}
+.ln-abas{display:flex;background:var(--ds-bg3);border:1px solid var(--ds-bd);border-radius:var(--ds-r);padding:3px;margin-bottom:24px;}
+.ln-aba{flex:1;padding:7px 10px;background:none;border:none;border-radius:3px;font-family:var(--ds-font);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ds-tx3);cursor:pointer;transition:all .15s;}
 .ln-aba.sel{background:var(--ds-dark);color:var(--ds-or);}
-.ln-reset-msg{background:var(--ds-bg2);border:1px solid var(--ds-bd);border-radius:var(--ds-r-sm);padding:14px 16px;font-size:12px;color:var(--ds-tx2);line-height:1.6;}
-.ln-reset-msg strong{display:block;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--ds-tx);margin-bottom:6px;}
+.ln-esqueci{text-align:center;margin-top:14px;font-size:11px;color:var(--ds-tx3);font-weight:600;}
+.ln-esqueci a{color:var(--ds-or);text-decoration:none;cursor:pointer;}
+.ln-esqueci a:hover{text-decoration:underline;}
 @media(max-width:768px){.ln-esq{display:none;}.ln-dir{width:100%;}}
 .fg{margin-bottom:14px}
 .fg label{display:block;font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
@@ -393,47 +405,70 @@ tr.row td:last-child{padding-right:12px}
   <div class="ln-esq">
     <div class="ln-grade"></div>
     <div class="ln-brilho"></div>
+    <div class="ln-linha-amb"></div>
     <div class="ln-logo">
       <div class="ln-logo-tag">Sistema Forte</div>
-      <div class="ln-logo-l1">FORTE</div>
-      <div class="ln-logo-l2">RDO</div>
+      <div class="ln-logo-l1">FORTE<span style="color:var(--ds-or)"> RDO</span></div>
       <div class="ln-logo-l3">Relatório Diário de Obra</div>
     </div>
     <div class="ln-niv-lbl">Perfis de Acesso</div>
-    <div class="ln-niv-card">
-      <h4>Administrador</h4>
-      <p>Acesso total ao sistema</p>
-      <span class="ln-badge">Contratos</span><span class="ln-badge">Boletins</span><span class="ln-badge">Gestão</span>
+    <div class="ln-niv-card" style="border-left-color:var(--ds-or)">
+      <div class="ln-niv-info">
+        <h4>Administrador</h4>
+        <p>Acesso total ao sistema.</p>
+        <div class="ln-badges">
+          <span class="ln-badge">Contratos</span>
+          <span class="ln-badge">Boletins</span>
+          <span class="ln-badge">OS</span>
+          <span class="ln-badge">Gestão</span>
+        </div>
+      </div>
     </div>
     <div class="ln-niv-card" style="border-left-color:var(--ds-blu)">
-      <h4>Encarregado</h4>
-      <p>Registro de produção</p>
-      <span class="ln-badge">Apontamentos</span><span class="ln-badge">Equipe</span>
+      <div class="ln-niv-info">
+        <h4>Encarregado</h4>
+        <p>Registro de produção e equipe.</p>
+        <div class="ln-badges">
+          <span class="ln-badge">Boletins</span>
+          <span class="ln-badge">OS</span>
+          <span class="ln-badge-nao">Contratos</span>
+          <span class="ln-badge-nao">Gestão</span>
+        </div>
+      </div>
     </div>
-    <div class="ln-rod">ECCOFORTE &copy; 2026</div>
+    <div class="ln-rod"><span>Forte Sinalização &copy;</span><span>Confidencial</span></div>
   </div>
   <div class="ln-dir">
     <div class="ln-form">
-      <div class="ln-titulo">Entrar no Sistema</div>
-      <div class="ln-sub">Insira seu nome para acessar o sistema</div>
+      <div class="ln-titulo">Login</div>
       <div class="ln-abas" id="ln-tabs-main">
         <button class="ln-aba sel" data-aba="login" onclick="trocaAba('login')">Já Tenho Acesso</button>
         <button class="ln-aba" data-aba="reset" onclick="trocaAba('reset')">Redefinir Senha</button>
       </div>
       <div id="ln-painel-login">
-        <button id="rc-adm" class="role-card sel" style="display:none"></button>
-        <button id="rc-enc" class="role-card" style="display:none"></button>
+        <div class="login-err" id="l-err"></div>
         <div class="ln-campo">
-          <label class="ln-lbl" for="li-name">Seu Nome</label>
-          <input class="ln-input" type="text" id="li-name" placeholder="Digite seu nome..." />
+          <label class="ln-lbl" for="l-user">E-mail</label>
+          <input class="ln-input" type="email" id="l-user" placeholder="seu@email.com.br" autocomplete="email" />
         </div>
-        <button class="ln-btn" onclick="doLogin()">Entrar no Sistema</button>
+        <div class="ln-campo">
+          <label class="ln-lbl" for="l-pass">Senha</label>
+          <div class="ln-campo-senha">
+            <input class="ln-input" type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password" />
+            <button class="ln-olho" type="button" onclick="toggleOlho('l-pass',this)">👁</button>
+          </div>
+        </div>
+        <button class="ln-btn" onclick="doLogin()">Entrar</button>
       </div>
       <div id="ln-painel-reset" style="display:none">
-        <div class="ln-reset-msg">
-          <strong>Redefinir Acesso</strong>
-          Para redefinir seu acesso ao sistema, entre em contato com o administrador.
+        <div class="login-err" id="l-reset-err"></div>
+        <p style="font-size:11px;color:var(--ds-tx3);margin-bottom:14px;font-weight:500;">Informe seu e-mail cadastrado para receber o link de redefinição de senha.</p>
+        <div class="ln-campo">
+          <label class="ln-lbl" for="l-reset-email">E-mail cadastrado</label>
+          <input class="ln-input" type="email" id="l-reset-email" placeholder="seu@email.com.br" autocomplete="email" />
         </div>
+        <button class="ln-btn" onclick="doReset()">Enviar Link de Redefinição</button>
+        <div class="ln-esqueci"><a onclick="trocaAba('login')">← Voltar ao login</a></div>
       </div>
     </div>
   </div>
@@ -724,6 +759,24 @@ tr.row td:last-child{padding-right:12px}
 
 <script>
 /* ═══════════════════════════════════════════════════
+   FIREBASE
+═══════════════════════════════════════════════════ */
+var firebaseConfig = {
+  apiKey: "AIzaSyBFmkbZDOD5SGcZn0N5_bRCkUfAK0I-aVg",
+  authDomain: "forte-rdo.firebaseapp.com",
+  projectId: "forte-rdo",
+  storageBucket: "forte-rdo.firebasestorage.app",
+  messagingSenderId: "1078788907049",
+  appId: "1:1078788907049:web:e2602060ee234791003c38"
+};
+firebase.initializeApp(firebaseConfig);
+var auth = firebase.auth();
+var db   = firebase.firestore();
+var authSec = firebase.initializeApp(firebaseConfig, 'sec').auth();
+var USUARIOS = db.collection('usuarios');
+var currentPerfil = null;
+
+/* ═══════════════════════════════════════════════════
    STATE
 ═══════════════════════════════════════════════════ */
 const S = {
@@ -875,42 +928,109 @@ function calcHoras(a,b){
 /* ═══════════════════════════════════════════════════
    AUTH
 ═══════════════════════════════════════════════════ */
-function trocaAba(aba) {
-  document.querySelectorAll('#ln-tabs-main .ln-aba').forEach(function(b){ b.classList.remove('sel'); });
-  document.querySelector('#ln-tabs-main [data-aba="'+aba+'"]').classList.add('sel');
-  document.getElementById('ln-painel-login').style.display = aba === 'login' ? '' : 'none';
-  document.getElementById('ln-painel-reset').style.display = aba === 'reset' ? '' : 'none';
-}
-function selRole(r){
-  document.getElementById('rc-adm').classList.toggle('sel',r==='adm');
-  document.getElementById('rc-enc').classList.toggle('sel',r==='enc');
-  document.getElementById('li-name').value=r==='adm'?'Admin':'';
-}
+auth.onAuthStateChanged(function(user) {
+  if (user) {
+    USUARIOS.doc(user.uid).get().then(function(snap) {
+      if (!snap.exists) {
+        USUARIOS.limit(1).get().then(function(q) {
+          if (q.empty) {
+            var perfil = {nome:user.email.split('@')[0], email:user.email, nivel:'admin', status:'ativo', criado:firebase.firestore.FieldValue.serverTimestamp()};
+            USUARIOS.doc(user.uid).set(perfil).then(function() {
+              currentPerfil = Object.assign({uid:user.uid}, perfil);
+              afterLogin();
+            }).catch(function() {
+              currentPerfil = {uid:user.uid, nome:user.email.split('@')[0], email:user.email, nivel:'admin', status:'ativo'};
+              afterLogin();
+            });
+          } else {
+            auth.signOut();
+            document.getElementById('l-err').textContent = 'Usuário não cadastrado. Contate o administrador.';
+            document.getElementById('login-screen').style.display = 'flex';
+          }
+        }).catch(function() {
+          currentPerfil = {uid:user.uid, nome:user.email.split('@')[0], email:user.email, nivel:'admin', status:'ativo'};
+          afterLogin();
+        });
+      } else if (snap.data().status !== 'ativo') {
+        auth.signOut();
+        document.getElementById('l-err').textContent = 'Usuário inativo. Contate o administrador.';
+        document.getElementById('login-screen').style.display = 'flex';
+      } else {
+        currentPerfil = Object.assign({uid:user.uid}, snap.data());
+        afterLogin();
+      }
+    }).catch(function() {
+      currentPerfil = {uid:user.uid, nome:user.email.split('@')[0], email:user.email, nivel:'admin', status:'ativo'};
+      afterLogin();
+    });
+  } else {
+    currentPerfil = null;
+    document.getElementById('login-screen').style.display = 'flex';
+  }
+});
 
-async function doLogin(){
-  const isAdm=document.getElementById('rc-adm').classList.contains('sel');
-  const name=document.getElementById('li-name').value.trim();
-  if(!name){toast('Digite seu nome','er');return}
-  S.user={role:isAdm?'adm':'enc',name};
-  await loadData();
-  document.getElementById('login-screen').style.display='none';
+function afterLogin() {
+  var isAdm = currentPerfil.nivel === 'admin';
+  S.user = {role: isAdm ? 'adm' : 'enc', name: currentPerfil.nome, email: currentPerfil.email, uid: currentPerfil.uid};
+  loadData();
+  document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').classList.add('vis');
-  document.getElementById('u-name').textContent=name;
-  document.getElementById('u-role').textContent=isAdm?'ADM':'ENCARREGADO';
-  document.getElementById('sb-av').textContent=name.charAt(0).toUpperCase();
-  if(!isAdm){
-    document.getElementById('sbi-contratos').style.display='none';
+  document.getElementById('u-name').textContent = currentPerfil.nome;
+  document.getElementById('u-role').textContent = isAdm ? 'ADM' : 'ENCARREGADO';
+  document.getElementById('sb-av').textContent = currentPerfil.nome.charAt(0).toUpperCase();
+  if (!isAdm) {
+    document.getElementById('sbi-contratos').style.display = 'none';
     nav('boletins');
   } else {
     nav('contratos');
   }
 }
 
-function doLogout(){
-  if(!confirm('Deseja sair?'))return;
-  S.user=null;
-  document.getElementById('app').classList.remove('vis');
-  document.getElementById('login-screen').style.display='flex';
+function trocaAba(aba) {
+  document.querySelectorAll('#ln-tabs-main .ln-aba').forEach(function(b){ b.classList.remove('sel'); });
+  document.querySelector('#ln-tabs-main [data-aba="'+aba+'"]').classList.add('sel');
+  document.getElementById('ln-painel-login').style.display = aba === 'login' ? '' : 'none';
+  document.getElementById('ln-painel-reset').style.display = aba === 'reset' ? '' : 'none';
+  document.getElementById('l-err').textContent = '';
+}
+
+function toggleOlho(inputId, btn) {
+  var inp = document.getElementById(inputId);
+  var show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.textContent = show ? '🙈' : '👁';
+}
+
+function doLogin() {
+  var email = document.getElementById('l-user').value.trim();
+  var pass  = document.getElementById('l-pass').value;
+  var err   = document.getElementById('l-err');
+  err.textContent = '';
+  if (!email || !pass) { err.textContent = 'Preencha e-mail e senha.'; return; }
+  auth.signInWithEmailAndPassword(email, pass).catch(function() {
+    err.textContent = 'E-mail ou senha incorretos.';
+    document.getElementById('l-pass').value = '';
+    document.getElementById('l-pass').focus();
+  });
+}
+
+function doReset() {
+  var email = document.getElementById('l-reset-email').value.trim();
+  var err   = document.getElementById('l-reset-err');
+  err.textContent = '';
+  if (!email) { err.textContent = 'Informe o e-mail.'; return; }
+  auth.sendPasswordResetEmail(email).then(function() {
+    err.style.color = 'var(--ds-grn)';
+    err.textContent = 'Link enviado! Verifique seu e-mail.';
+    document.getElementById('l-reset-email').value = '';
+  }).catch(function() {
+    err.textContent = 'E-mail não encontrado.';
+  });
+}
+
+function doLogout() {
+  if (!confirm('Deseja sair do sistema?')) return;
+  auth.signOut();
 }
 
 /* ═══════════════════════════════════════════════════
