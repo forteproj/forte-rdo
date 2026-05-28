@@ -1029,11 +1029,14 @@ async function _syncObraToAp(c,del=false){
 async function _syncOSToAp(os,del=false){
   const regs=await _apRead('regs');
   if(del){await _apWrite('regs',regs.filter(r=>r.id!==os.id));return;}
+  const cont=S.contracts.find(c=>c.id===os.cid);
   const idx=regs.findIndex(r=>r.id===os.id);
   const entry={
-    id:os.id,encId:0,obraId:os.cid,data:os.data,placa:os.placa||'',
+    id:os.id,encId:0,encNome:os.eq||os.by||'',
+    obraId:os.cid,local:cont?cont.titulo:os.cid,
+    data:os.data,placa:os.placa||'',
     funcionarios:(os.funcionarios||[]).map(f=>({nome:f.nome,entrada:f.entrada||'',saida:f.saida||'',abono:f.situacao||'Trabalhou'})),
-    obs:os.obs||'',abono:os.abono||false,abonoMotivo:os.abono?'Outro':'',fromRdo:true
+    obs:os.obs||'',abonoEq:os.abono||false,abonoMotivo:os.abono?'Outro':'',fromRdo:true
   };
   if(idx>=0)regs[idx]=entry;else regs.push(entry);
   await _apWrite('regs',regs);
