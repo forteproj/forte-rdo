@@ -1020,10 +1020,12 @@ async function _apWrite(key,lista){
 }
 async function _syncObraToAp(c,del=false){
   const obras=await _apRead('obras');
+  toast('DEBUG leu '+obras.length+' obras','in');
   if(del){await _apWrite('obras',obras.filter(o=>o.id!==c.id));return;}
   const idx=obras.findIndex(o=>o.id===c.id);
   const entry={id:c.id,nome:c.titulo,cidade:c.obra||'',uf:'',ativo:true};
   if(idx>=0)obras[idx]=entry;else obras.push(entry);
+  toast('DEBUG vai gravar '+obras.length+' obras','in');
   await _apWrite('obras',obras);
 }
 async function _syncOSToAp(os,del=false){
