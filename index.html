@@ -1016,7 +1016,11 @@ async function _apWrite(key,lista){
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({fields:{valor:{stringValue:JSON.stringify(lista)}}})
   });
-  if(!r.ok){const t=await r.text();throw new Error(r.status+': '+t.slice(0,120));}
+  const body=await r.json();
+  if(!r.ok){throw new Error(r.status+': '+JSON.stringify(body).slice(0,120));}
+  const savedVal=body.fields?.valor?.stringValue;
+  const savedLen=savedVal?JSON.parse(savedVal).length:'?';
+  toast('FS gravou '+savedLen+' itens em '+key,'in');
 }
 async function _syncObraToAp(c,del=false){
   const obras=await _apRead('obras');
