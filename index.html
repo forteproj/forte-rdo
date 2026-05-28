@@ -1126,6 +1126,18 @@ async function loadData(){
     S.servicos=[...SEED.servicos];
     S.cores=[...SEED.cores];
   }
+  // Sync funcionarios with Firestore (shared source of truth)
+  try{
+    const fsSnap=await db.collection('funcionarios').get();
+    if(!fsSnap.empty){
+      S.funcionarios=fsSnap.docs.map(d=>({id:d.id,...d.data()}));
+    } else if(S.funcionarios.length){
+      // One-time migration: push existing employees to Firestore
+      const batch=db.batch();
+      S.funcionarios.forEach(f=>batch.set(db.collection('funcionarios').doc(f.id),{nome:f.nome,cargo:f.cargo||''}));
+      batch.commit().catch(e=>console.warn('fs-migrate',e));
+    }
+  }catch(e){console.warn('fs-load-funcs',e);}
 }
 
 async function persist(){
@@ -2325,20 +2337,26 @@ async function saveFuncionario(){
   const cargo=document.getElementById('func-cargo').value;
   if(!nome){toast('Informe o nome','er');return;}
   if(!cargo){toast('Selecione o cargo','er');return;}
+  let fid=id;
   if(id){
     const i=S.funcionarios.findIndex(x=>x.id===id);
     S.funcionarios[i]={...S.funcionarios[i],nome,cargo};
     toast('Funcionário atualizado');
   } else {
-    S.funcionarios.push({id:uid(),nome,cargo});
+    fid=uid();
+    S.funcionarios.push({id:fid,nome,cargo});
     toast('Funcionário adicionado');
   }
-  await persist();closeOv('ov-func');rCadastros();
+  await persist();
+  db.collection('funcionarios').doc(fid).set({nome,cargo}).catch(e=>console.warn('fs-sync',e));
+  closeOv('ov-func');rCadastros();
 }
 function delFuncionario(id){
   cfm('Excluir Funcionário','Excluir este funcionário?',async()=>{
     S.funcionarios=S.funcionarios.filter(x=>x.id!==id);
-    await persist();toast('Funcionário excluído','in');rCadastros();
+    await persist();
+    db.collection('funcionarios').doc(id).delete().catch(e=>console.warn('fs-sync',e));
+    toast('Funcionário excluído','in');rCadastros();
   });
 }
 
