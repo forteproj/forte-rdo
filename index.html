@@ -1137,6 +1137,7 @@ const SEED = {
 async function loadData(){
   try{
     const raw=localStorage.getItem('forte_v2');
+    toast('🔍 LOAD: storage='+(raw?'encontrado('+JSON.parse(raw).contracts?.length+' contratos)':'VAZIO'),'in');
     if(raw){
       const d=JSON.parse(raw);
       S.contracts=d.contracts||[...SEED.contracts];
@@ -1176,14 +1177,18 @@ async function loadData(){
 
 function persist(){
   try{
-    localStorage.setItem('forte_v2',JSON.stringify({
+    const json=JSON.stringify({
       contracts:S.contracts,items:S.items,bols:S.bols,prods:S.prods,
       priceHistory:S.priceHistory,encarregados:S.encarregados,
       funcionarios:S.funcionarios,servicos:S.servicos,cores:S.cores
-    }));
+    });
+    localStorage.setItem('forte_v2',json);
+    const check=localStorage.getItem('forte_v2');
+    if(check) toast('💾 SALVO: '+S.contracts.length+' contratos no storage','ok');
+    else toast('❌ FALHOU: localStorage não gravou!','er');
   }catch(e){
     console.error('persist error',e);
-    toast('Erro ao salvar: '+e,'er');
+    toast('❌ Erro ao salvar: '+e,'er');
   }
 }
 
