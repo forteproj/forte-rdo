@@ -1134,6 +1134,14 @@ const SEED = {
 /* ═══════════════════════════════════════════════════
    STORAGE
 ═══════════════════════════════════════════════════ */
+if(!window.storage){
+  window.storage={
+    get:async(k)=>({value:localStorage.getItem(k)}),
+    set:async(k,v)=>localStorage.setItem(k,v),
+    remove:async(k)=>localStorage.removeItem(k)
+  };
+}
+
 async function loadData(){
   try{
     const r=await window.storage.get('forte_v2');
@@ -1176,12 +1184,16 @@ async function loadData(){
 
 async function persist(){
   try{
-    await window.storage.set('forte_v2',JSON.stringify({
+    const payload=JSON.stringify({
       contracts:S.contracts,items:S.items,bols:S.bols,prods:S.prods,
       priceHistory:S.priceHistory,encarregados:S.encarregados,
       funcionarios:S.funcionarios,servicos:S.servicos,cores:S.cores
-    }));
-  }catch(e){console.warn('storage error',e)}
+    });
+    await window.storage.set('forte_v2',payload);
+  }catch(e){
+    console.error('storage error',e);
+    toast('Erro ao salvar localmente: '+e,'er');
+  }
 }
 
 /* ═══════════════════════════════════════════════════
@@ -1266,15 +1278,15 @@ auth.onAuthStateChanged(function(user) {
   }
 });
 
-function afterLogin() {
+async function afterLogin() {
   var isAdm = currentPerfil.nivel === 'admin';
   S.user = {role: isAdm ? 'adm' : 'enc', name: currentPerfil.nome, email: currentPerfil.email, uid: currentPerfil.uid};
-  loadData();
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').classList.add('vis');
   document.getElementById('u-name').textContent = currentPerfil.nome;
   document.getElementById('u-role').textContent = isAdm ? 'ADM' : 'ENC';
   document.getElementById('btn-usuarios').style.display = isAdm ? '' : 'none';
+  await loadData();
   if (!isAdm) {
     document.getElementById('nav-contratos').style.display = 'none';
     document.getElementById('nav-cadastros').style.display = 'none';
