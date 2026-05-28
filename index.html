@@ -1992,7 +1992,7 @@ function _osFillDL(){
   const dl=document.getElementById('dl-enc');
   if(!dl)return;
   const lista=S.funcionarios.length?S.funcionarios:S.encarregados;
-  dl.innerHTML=lista.map(f=>`<option value="${f.nome}">${f.cargo?f.nome+' ('+f.cargo+')':''}</option>`).join('');
+  dl.innerHTML=lista.map(f=>`<option value="${f.nome}">${f.nome}${f.cargo?' ('+f.cargo+')':''}</option>`).join('');
 }
 
 function _osSitClass(s){
