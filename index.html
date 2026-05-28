@@ -370,6 +370,28 @@ tr.row td:last-child{padding-right:12px}
 .pmv{font-size:13px;font-weight:700;color:var(--tx);margin-top:2px}
 .pmv.hi{color:var(--or)}
 
+/* ── OS FORM ── */
+.os-sec{background:var(--bd2);border:1px solid var(--bd);border-radius:var(--r2);padding:16px;margin-bottom:14px;}
+.os-sec-tit{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.os-sec-bar{width:3px;height:14px;background:var(--or);border-radius:2px;flex-shrink:0;}
+.os-relogio{background:var(--ds-blu-bg);border:1px solid var(--ds-blu-bd);border-left:3px solid var(--blu);border-radius:var(--r2);padding:14px;margin-bottom:12px;}
+.os-relogio-tit{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--blu);margin-bottom:4px;}
+.os-relogio-sub{font-size:11px;color:var(--tx3);margin-bottom:12px;line-height:1.5;}
+.os-relogio-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;}
+.os-func-hdr{display:grid;grid-template-columns:2fr 1fr 1fr 1.2fr auto;gap:8px;padding:6px 4px;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);}
+.os-func-row{display:grid;grid-template-columns:2fr 1fr 1fr 1.2fr auto;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--bd);}
+.os-func-row input,.os-func-row select{height:36px;font-size:12px;padding:0 8px;}
+.os-func-sel{background:var(--ds-grn-bg);color:var(--grn);border-color:var(--ds-grn-bd);}
+.os-func-falt{background:var(--ds-red-bg);color:var(--red);border-color:var(--ds-red-bd);}
+.os-func-otro{background:var(--ds-ylw-bg);color:var(--ylw);border-color:var(--ds-ylw-bd);}
+.os-abono{display:flex;align-items:center;justify-content:space-between;background:var(--bd2);border:1px solid var(--bd);border-radius:var(--r2);padding:14px 16px;margin-bottom:14px;gap:12px;}
+.os-toggle{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0;}
+.os-toggle input{display:none;}
+.os-toggle-sl{position:absolute;inset:0;background:var(--bd);border-radius:24px;cursor:pointer;transition:.2s;}
+.os-toggle-sl:before{content:'';position:absolute;width:18px;height:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+.os-toggle input:checked+.os-toggle-sl{background:var(--or);}
+.os-toggle input:checked+.os-toggle-sl:before{transform:translateX(20px);}
+
 /* ── OS HEADER ── */
 .osh{background:var(--wh);border-radius:var(--r);padding:22px;box-shadow:var(--sh);margin-bottom:18px}
 .osh-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
@@ -670,29 +692,53 @@ tr.row td:last-child{padding-right:12px}
 <div class="ov" id="ov-os">
   <div class="drawer">
     <div class="dh">
-      <h2>Ordem de Serviço</h2>
+      <h2>Relatório Diário de Obra</h2>
       <button class="dx" onclick="closeOv('ov-os')">✕</button>
     </div>
     <div class="db">
-      <div class="fg"><label>Contrato *</label>
+      <div class="fg"><label>OBRA / LOCAL *</label>
         <select id="os-cid"><option value="">Selecione o contrato...</option></select>
       </div>
       <div class="fr">
-        <div class="fg"><label>Equipe / Encarregado *</label><input id="os-equipe" /></div>
-        <div class="fg"><label>Data *</label><input type="date" id="os-data" /></div>
-      </div>
-      <div class="fg"><label>Local / Região</label><input id="os-local" placeholder="Bairro, região..." /></div>
-      <div class="fr">
-        <div class="fg"><label>Horário Início</label><input type="time" id="os-ini" step="1" /></div>
-        <div class="fg"><label>Horário Fim</label><input type="time" id="os-fim" step="1" /></div>
+        <div class="fg"><label>DATA DO SERVIÇO *</label><input type="date" id="os-data" /></div>
+        <div class="fg"><label>PLACA DO VEÍCULO</label><input id="os-placa" placeholder="ABC1D23" style="text-transform:uppercase" /></div>
       </div>
       <div class="fr">
-        <div class="fg"><label>Equipamento</label><input id="os-equip" placeholder="Thermomarcadora, rolo..." /></div>
-        <div class="fg"><label>Projeto N°</label><input id="os-proj" /></div>
+        <div class="fg"><label>KM INICIAL</label><input type="number" id="os-km-ini" placeholder="0" min="0" /></div>
+        <div class="fg"><label>KM FINAL</label><input type="number" id="os-km-fim" placeholder="0" min="0" /></div>
       </div>
-      <div class="fg"><label>Material Utilizado</label><input id="os-mat" placeholder="Tinta, termoplástico, esferas..." /></div>
-      <div class="fg"><label>Observações</label><textarea id="os-obs" placeholder="Motivos, intercorrências..."></textarea></div>
+      <div class="os-sec">
+        <div class="os-sec-tit"><span class="os-sec-bar"></span>EQUIPE</div>
+        <div class="os-relogio">
+          <div class="os-relogio-tit">RELÓGIO MESTRE</div>
+          <div class="os-relogio-sub">Defina os horários e aplique para toda a equipe. Você pode ajustar individualmente depois.</div>
+          <div class="os-relogio-row">
+            <div class="fg" style="margin-bottom:0;min-width:130px"><label>ENTRADA</label><input type="time" id="os-mestre-ini" step="60" /></div>
+            <div class="fg" style="margin-bottom:0;min-width:130px"><label>SAÍDA</label><input type="time" id="os-mestre-fim" step="60" /></div>
+            <button class="btn btn-blu btn-sm" onclick="aplicarMestre()">APLICAR A TODOS</button>
+          </div>
+        </div>
+        <div class="os-func-hdr">
+          <div>FUNCIONÁRIO</div><div>ENTRADA</div><div>SAÍDA</div><div>SITUAÇÃO</div><div></div>
+        </div>
+        <div id="os-func-list"></div>
+        <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px;border-style:dashed" onclick="addFuncRow()">+ Adicionar Funcionário</button>
+      </div>
+      <div class="os-abono">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--tx)">Abono de Equipe</div>
+          <div style="font-size:11px;color:var(--tx3);margin-top:2px">Ative quando TODA a equipe não trabalhar no dia</div>
+        </div>
+        <label class="os-toggle">
+          <input type="checkbox" id="os-abono" onchange="updAbonoState()" />
+          <span class="os-toggle-sl"></span>
+        </label>
+      </div>
+      <div class="fg"><label>OBSERVAÇÕES</label><textarea id="os-obs" placeholder="Ocorrências, pendências, condições da via, materiais..."></textarea></div>
       <input type="hidden" id="os-eid" />
+
+      <!-- datalist de encarregados para autocomplete -->
+      <datalist id="dl-enc"></datalist>
     </div>
     <div class="df">
       <button class="btn btn-ghost" onclick="closeOv('ov-os')">Cancelar</button>
@@ -1514,8 +1560,14 @@ function rItens(){
 function rBoletins(){
   const isAdm=S.user?.role==='adm';
   let bs=[...S.bols];
-  if(!isAdm)bs=bs.filter(b=>b.eq.toLowerCase()===S.user.name.toLowerCase()||b.by?.toLowerCase()===S.user.name.toLowerCase());
-  if(S.q)bs=bs.filter(b=>(b.eq||'').toLowerCase().includes(S.q)||(b.local||'').toLowerCase().includes(S.q)||(b.st||'').toLowerCase().includes(S.q));
+  if(!isAdm)bs=bs.filter(b=>{
+    const eq=(b.eq||'').toLowerCase();
+    const byUser=(b.by||'').toLowerCase();
+    const name=(S.user?.name||'').toLowerCase();
+    const inFunc=b.funcionarios?.some(f=>(f.nome||'').toLowerCase()===name);
+    return eq===name||byUser===name||inFunc;
+  });
+  if(S.q)bs=bs.filter(b=>(b.eq||'').toLowerCase().includes(S.q)||(b.placa||'').toLowerCase().includes(S.q)||(b.st||'').toLowerCase().includes(S.q));
   bs.sort((a,b)=>(b.data||'').localeCompare(a.data||''));
   const ab=bs.filter(x=>x.st==='ABERTO').length;
   const fi=bs.filter(x=>x.st==='FINALIZADO').length;
@@ -1528,11 +1580,11 @@ function rBoletins(){
   </div>
   <div class="card"><table>
     <thead><tr>
-      <th>STATUS</th><th>CONTRATANTE</th><th>DATA</th><th>PROJETO N°</th>
-      <th>LOCAL</th><th>EQUIPE</th><th>INÍCIO</th><th>FIM</th><th>PROD.</th><th>HORAS</th>
+      <th>STATUS</th><th>CONTRATANTE</th><th>DATA</th><th>EQUIPE</th>
+      <th>PLACA</th><th>FUNCIONÁRIOS</th><th>INÍCIO</th><th>FIM</th><th>PROD.</th>
       <th></th>
     </tr></thead><tbody>`;
-  if(!bs.length){h+=`<tr><td colspan="11" style="text-align:center;padding:56px;color:var(--tx3)">
+  if(!bs.length){h+=`<tr><td colspan="10" style="text-align:center;padding:56px;color:var(--tx3)">
     <div style="font-size:40px;margin-bottom:12px">📋</div>
     <div style="font-size:15px;font-weight:700;color:var(--tx2)">Nenhuma OS encontrada</div>
     <div style="font-size:13px;margin-top:6px">Clique em "+ Nova OS" para criar</div>
@@ -1541,17 +1593,18 @@ function rBoletins(){
     const cont=S.contracts.find(c=>c.id===b.cid);
     const prs=S.prods.filter(p=>p.osid===b.id);
     const bc=b.st==='ABERTO'?'b-ab':b.st==='FINALIZADO'?'b-fi':'b-co';
+    const nFunc=b.funcionarios?.length||1;
+    const trabalharam=b.funcionarios?.filter(f=>f.situacao==='Trabalhou').length??nFunc;
     h+=`<tr class="row" onclick="nav('os','${b.id}')">
       <td><span class="badge ${bc}">${b.st}</span></td>
       <td style="font-size:12px">${cont?.cont||'-'}</td>
       <td>${fmtD(b.data)}</td>
-      <td>${b.proj||'-'}</td>
-      <td style="font-size:12px">${b.local||'-'}</td>
       <td><strong>${b.eq||'-'}</strong></td>
-      <td class="mono" style="font-size:12px">${b.ini||'-'}</td>
-      <td class="mono" style="font-size:12px">${b.fim||'-'}</td>
+      <td class="mono" style="font-size:12px">${b.placa||'-'}</td>
+      <td><span class="chip">${trabalharam}/${nFunc}</span></td>
+      <td class="mono" style="font-size:12px">${(b.ini||'').substr(0,5)||'-'}</td>
+      <td class="mono" style="font-size:12px">${(b.fim||'').substr(0,5)||'-'}</td>
       <td><span class="chip">${prs.length}</span></td>
-      <td class="mono" style="font-size:12px">${calcHoras(b.ini,b.fim)}</td>
       <td class="arr">›</td>
     </tr>`;
   });
@@ -1568,7 +1621,7 @@ function rOS(){
   const cont=S.contracts.find(c=>c.id===os.cid);
   const prs=S.prods.filter(p=>p.osid===os.id);
   const isAdm=S.user?.role==='adm';
-  const isOwner=os.eq?.toLowerCase()===S.user?.name?.toLowerCase()||os.by?.toLowerCase()===S.user?.name?.toLowerCase();
+  const isOwner=os.eq?.toLowerCase()===S.user?.name?.toLowerCase()||os.by?.toLowerCase()===S.user?.name?.toLowerCase()||os.funcionarios?.some(f=>(f.nome||'').toLowerCase()===S.user?.name?.toLowerCase());
   const canEdit=os.st==='ABERTO'&&(isAdm||isOwner);
   const canFin=canEdit;
   const canCfm=isAdm&&os.st==='FINALIZADO';
@@ -1589,17 +1642,42 @@ function rOS(){
       <span class="badge ${bc2}">${os.st}</span>
     </div>
     <div class="osh-fields">
-      <div class="osf"><div class="k">Equipe</div><div class="v">${os.eq||'-'}</div></div>
       <div class="osf"><div class="k">Data</div><div class="v">${fmtD(os.data)}</div></div>
-      <div class="osf"><div class="k">Local</div><div class="v">${os.local||'-'}</div></div>
-      <div class="osf"><div class="k">Início</div><div class="v mono">${os.ini||'-'}</div></div>
-      <div class="osf"><div class="k">Fim</div><div class="v mono">${os.fim||'-'}</div></div>
+      <div class="osf"><div class="k">Placa</div><div class="v mono">${os.placa||'-'}</div></div>
+      <div class="osf"><div class="k">KM Inicial</div><div class="v mono">${os.kmIni||'-'}</div></div>
+      <div class="osf"><div class="k">KM Final</div><div class="v mono">${os.kmFim||'-'}</div></div>
+      <div class="osf"><div class="k">KM Rodado</div><div class="v mono">${os.kmIni&&os.kmFim?Number(os.kmFim)-Number(os.kmIni)+' km':'-'}</div></div>
     </div>
-    <div class="osh-sum">
+    ${(()=>{
+      const funcs=os.funcionarios?.length?os.funcionarios:[{nome:os.eq||'-',entrada:os.ini||'',saida:os.fim||'',situacao:'Trabalhou'}];
+      const sitColor=s=>s==='Trabalhou'?'var(--grn)':s==='Faltou'?'var(--red)':'var(--ylw)';
+      const sitBg=s=>s==='Trabalhou'?'var(--ds-grn-bg)':s==='Faltou'?'var(--ds-red-bg)':'var(--ds-ylw-bg)';
+      return `<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)">
+        <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px">EQUIPE</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr style="background:var(--bd2)">
+            <th style="padding:6px 10px;text-align:left;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--tx3)">FUNCIONÁRIO</th>
+            <th style="padding:6px 10px;text-align:center;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--tx3)">ENTRADA</th>
+            <th style="padding:6px 10px;text-align:center;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--tx3)">SAÍDA</th>
+            <th style="padding:6px 10px;text-align:center;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--tx3)">HORAS</th>
+            <th style="padding:6px 10px;text-align:center;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--tx3)">SITUAÇÃO</th>
+          </tr></thead><tbody>
+          ${funcs.map(f=>`<tr style="border-bottom:1px solid var(--bd)">
+            <td style="padding:8px 10px;font-weight:600;color:var(--tx)">${f.nome||'-'}</td>
+            <td style="padding:8px 10px;text-align:center;font-family:monospace">${(f.entrada||'').substr(0,5)||'-'}</td>
+            <td style="padding:8px 10px;text-align:center;font-family:monospace">${(f.saida||'').substr(0,5)||'-'}</td>
+            <td style="padding:8px 10px;text-align:center;font-family:monospace;color:var(--or);font-weight:700">${calcHoras(f.entrada,f.saida)}</td>
+            <td style="padding:8px 10px;text-align:center"><span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:3px;background:${sitBg(f.situacao)};color:${sitColor(f.situacao)}">${f.situacao||'Trabalhou'}</span></td>
+          </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+    })()}
+    <div class="osh-sum" style="margin-top:14px">
       <div class="ossi" style="border-top:3px solid var(--blu)"><div class="ossv">${prs.length}</div><div class="ossl">Produções</div></div>
       <div class="ossi" style="border-top:3px solid var(--or)"><div class="ossv or">${totM2.toFixed(2)}</div><div class="ossl">Total m²</div></div>
       <div class="ossi" style="border-top:3px solid var(--grn)"><div class="ossv grn" style="font-size:16px">${fmtR(totV)}</div><div class="ossl">Valor Est.</div></div>
-      <div class="ossi" style="border-top:3px solid var(--ylw)"><div class="ossv">${calcHoras(os.ini,os.fim)}</div><div class="ossl">Horas Trab.</div></div>
+      <div class="ossi" style="border-top:3px solid var(--ylw)"><div class="ossv">${os.funcionarios?.length||1}</div><div class="ossl">Funcionários</div></div>
     </div>
   </div>
   <div class="abar">`;
@@ -1789,14 +1867,22 @@ function fillContSelect(selId,selVal){
   S.contracts.forEach(c=>sel.innerHTML+=`<option value="${c.id}"${c.id===selVal?' selected':''}>${c.titulo}</option>`);
 }
 
+function _osFuncList(){return window._osFunc||[];}
+
 function openAddOS(){
   fillContSelect('os-cid','');
   document.getElementById('os-eid').value='';
-  document.getElementById('os-equipe').value=S.user?.role==='enc'?S.user.name:'';
   document.getElementById('os-data').value=today();
-  ['os-local','os-equip','os-proj','os-mat','os-obs'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('os-ini').value=new Date().toTimeString().substr(0,8);
-  document.getElementById('os-fim').value='';
+  document.getElementById('os-placa').value='';
+  document.getElementById('os-km-ini').value='';
+  document.getElementById('os-km-fim').value='';
+  document.getElementById('os-obs').value='';
+  document.getElementById('os-abono').checked=false;
+  document.getElementById('os-mestre-ini').value=new Date().toTimeString().substr(0,5);
+  document.getElementById('os-mestre-fim').value='';
+  window._osFunc=S.user?.role==='enc'?[{nome:S.user.name,entrada:'',saida:'',situacao:'Trabalhou'}]:[];
+  _osRenderFuncRows();
+  _osFillDL();
   openOv('ov-os');
 }
 
@@ -1804,15 +1890,21 @@ function openEditOS(id){
   const os=S.bols.find(b=>b.id===id);if(!os)return;
   fillContSelect('os-cid',os.cid);
   document.getElementById('os-eid').value=id;
-  document.getElementById('os-equipe').value=os.eq||'';
   document.getElementById('os-data').value=os.data||today();
-  document.getElementById('os-local').value=os.local||'';
-  document.getElementById('os-ini').value=os.ini||'';
-  document.getElementById('os-fim').value=os.fim||'';
-  document.getElementById('os-equip').value=os.equip||'';
-  document.getElementById('os-proj').value=os.proj||'';
-  document.getElementById('os-mat').value=os.mat||'';
+  document.getElementById('os-placa').value=os.placa||'';
+  document.getElementById('os-km-ini').value=os.kmIni||'';
+  document.getElementById('os-km-fim').value=os.kmFim||'';
   document.getElementById('os-obs').value=os.obs||'';
+  document.getElementById('os-abono').checked=!!os.abono;
+  const firstIni=os.funcionarios?.[0]?.entrada||os.ini||'';
+  const firstFim=os.funcionarios?.[0]?.saida||os.fim||'';
+  document.getElementById('os-mestre-ini').value=firstIni?firstIni.substr(0,5):'';
+  document.getElementById('os-mestre-fim').value=firstFim?firstFim.substr(0,5):'';
+  window._osFunc=os.funcionarios?.length
+    ? os.funcionarios.map(f=>({...f}))
+    : [{nome:os.eq||'',entrada:os.ini||'',saida:os.fim||'',situacao:'Trabalhou'}];
+  _osRenderFuncRows();
+  _osFillDL();
   openOv('ov-os');
 }
 
@@ -1820,7 +1912,23 @@ async function saveOS(){
   const eid=g('os-eid');
   const cid=document.getElementById('os-cid').value;
   if(!cid){toast('Selecione o contrato','er');return}
-  const d={cid,eq:g('os-equipe').trim(),data:g('os-data'),local:g('os-local').trim(),ini:g('os-ini'),fim:g('os-fim'),equip:g('os-equip').trim(),proj:g('os-proj').trim(),mat:g('os-mat').trim(),obs:g('os-obs').trim()};
+  const funcionarios=_osFuncList();
+  if(!funcionarios.length){toast('Adicione ao menos um funcionário','er');return}
+  const firstIni=funcionarios[0]?.entrada||'';
+  const lastFim=funcionarios.reduce((acc,f)=>f.saida>acc?f.saida:acc,'');
+  const d={
+    cid,
+    data:g('os-data'),
+    placa:document.getElementById('os-placa').value.trim().toUpperCase(),
+    kmIni:document.getElementById('os-km-ini').value||null,
+    kmFim:document.getElementById('os-km-fim').value||null,
+    obs:g('os-obs').trim(),
+    abono:document.getElementById('os-abono').checked,
+    funcionarios,
+    eq:funcionarios[0]?.nome||'',
+    ini:firstIni,
+    fim:lastFim
+  };
   if(eid){
     const i=S.bols.findIndex(b=>b.id===eid);
     S.bols[i]={...S.bols[i],...d};
@@ -1830,6 +1938,71 @@ async function saveOS(){
     S.bols.push(nb);S.osid=nb.id;
     await persist();closeOv('ov-os');nav('os',nb.id);toast('OS criada');
   }
+}
+
+/* ── OS FUNC ROWS ── */
+var _situacoes=['Trabalhou','Faltou','Atestado','Folga','Afastamento'];
+
+function _osFillDL(){
+  const dl=document.getElementById('dl-enc');
+  if(!dl)return;
+  dl.innerHTML=S.encarregados.map(e=>`<option value="${e.nome}">`).join('');
+}
+
+function _osSitClass(s){
+  if(s==='Trabalhou')return 'os-func-sel';
+  if(s==='Faltou')return 'os-func-falt';
+  return 'os-func-otro';
+}
+
+function _osRenderFuncRows(){
+  const list=document.getElementById('os-func-list');
+  if(!list)return;
+  const funcs=_osFuncList();
+  if(!funcs.length){list.innerHTML='';return;}
+  list.innerHTML=funcs.map((f,i)=>`
+    <div class="os-func-row" id="fr-${i}">
+      <input list="dl-enc" value="${f.nome||''}" placeholder="Nome do funcionário"
+        oninput="window._osFunc[${i}].nome=this.value" />
+      <input type="time" step="60" value="${(f.entrada||'').substr(0,5)}"
+        oninput="window._osFunc[${i}].entrada=this.value" />
+      <input type="time" step="60" value="${(f.saida||'').substr(0,5)}"
+        oninput="window._osFunc[${i}].saida=this.value" />
+      <select class="${_osSitClass(f.situacao)}"
+        onchange="window._osFunc[${i}].situacao=this.value;this.className='${_osSitClass('_')} '+_osSitClass(this.value)">
+        ${_situacoes.map(s=>`<option value="${s}"${s===f.situacao?' selected':''}>${s}</option>`).join('')}
+      </select>
+      <button class="btn btn-red btn-sm btn-icon" onclick="removeFuncRow(${i})">✕</button>
+    </div>`).join('');
+}
+
+function addFuncRow(){
+  if(!window._osFunc)window._osFunc=[];
+  window._osFunc.push({nome:'',entrada:'',saida:'',situacao:'Trabalhou'});
+  _osRenderFuncRows();
+  const list=document.getElementById('os-func-list');
+  if(list){const rows=list.querySelectorAll('.os-func-row');if(rows.length)rows[rows.length-1].querySelector('input').focus();}
+}
+
+function removeFuncRow(i){
+  window._osFunc.splice(i,1);
+  _osRenderFuncRows();
+}
+
+function aplicarMestre(){
+  const ini=document.getElementById('os-mestre-ini').value;
+  const fim=document.getElementById('os-mestre-fim').value;
+  if(!ini&&!fim){toast('Defina ao menos o horário de entrada no Relógio Mestre','er');return;}
+  if(!window._osFunc||!window._osFunc.length){toast('Adicione funcionários primeiro','er');return;}
+  window._osFunc.forEach(f=>{if(ini)f.entrada=ini;if(fim)f.saida=fim;});
+  _osRenderFuncRows();
+  toast('Horários aplicados a todos os funcionários');
+}
+
+function updAbonoState(){
+  const abono=document.getElementById('os-abono').checked;
+  const sec=document.querySelector('.os-sec');
+  if(sec)sec.style.opacity=abono?'0.4':'1';
 }
 
 async function chgSt(id,st){
