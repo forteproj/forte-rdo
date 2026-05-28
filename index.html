@@ -1132,64 +1132,69 @@ const SEED = {
 };
 
 /* ═══════════════════════════════════════════════════
-   STORAGE
+   STORAGE  (Firestore como primário, localStorage como cache)
 ═══════════════════════════════════════════════════ */
+function _applyData(d){
+  S.contracts=d.contracts||[...SEED.contracts];
+  S.items=d.items||[...SEED.items];
+  S.bols=d.bols||[...SEED.bols];
+  S.prods=d.prods||[...SEED.prods];
+  S.priceHistory=d.priceHistory||[...SEED.priceHistory];
+  S.encarregados=d.encarregados||[...SEED.encarregados];
+  S.funcionarios=d.funcionarios||[...SEED.funcionarios];
+  S.servicos=d.servicos&&d.servicos.length?d.servicos:[...SEED.servicos];
+  S.cores=d.cores&&d.cores.length?d.cores:[...SEED.cores];
+}
+function _seedData(){
+  S.contracts=[...SEED.contracts];S.items=[...SEED.items];
+  S.bols=[...SEED.bols];S.prods=[...SEED.prods];
+  S.priceHistory=[...SEED.priceHistory];S.encarregados=[...SEED.encarregados];
+  S.funcionarios=[...SEED.funcionarios];S.servicos=[...SEED.servicos];
+  S.cores=[...SEED.cores];
+}
+
 async function loadData(){
+  let loaded=false;
+  // 1. Firestore (fonte primária)
   try{
-    const raw=localStorage.getItem('forte_v2');
-    toast('🔍 LOAD: storage='+(raw?'encontrado('+JSON.parse(raw).contracts?.length+' contratos)':'VAZIO'),'in');
-    if(raw){
-      const d=JSON.parse(raw);
-      S.contracts=d.contracts||[...SEED.contracts];
-      S.items=d.items||[...SEED.items];
-      S.bols=d.bols||[...SEED.bols];
-      S.prods=d.prods||[...SEED.prods];
-      S.priceHistory=d.priceHistory||[...SEED.priceHistory];
-      S.encarregados=d.encarregados||[...SEED.encarregados];
-      S.funcionarios=d.funcionarios||[...SEED.funcionarios];
-      S.servicos=d.servicos&&d.servicos.length?d.servicos:[...SEED.servicos];
-      S.cores=d.cores&&d.cores.length?d.cores:[...SEED.cores];
-    } else throw 'empty';
-  }catch(e){
-    S.contracts=[...SEED.contracts];
-    S.items=[...SEED.items];
-    S.bols=[...SEED.bols];
-    S.prods=[...SEED.prods];
-    S.priceHistory=[...SEED.priceHistory];
-    S.encarregados=[...SEED.encarregados];
-    S.funcionarios=[...SEED.funcionarios];
-    S.servicos=[...SEED.servicos];
-    S.cores=[...SEED.cores];
+    const snap=await db.collection('dados').doc('app').get();
+    if(snap.exists){_applyData(JSON.parse(snap.data().valor));loaded=true;}
+  }catch(e){console.warn('load-fs:',e);}
+  // 2. localStorage (fallback)
+  if(!loaded){
+    try{
+      const raw=localStorage.getItem('forte_v2');
+      if(raw){_applyData(JSON.parse(raw));loaded=true;}
+    }catch(e){}
   }
-  // Sync funcionarios with Firestore (shared source of truth)
+  if(!loaded) _seedData();
+  // Sync funcionarios com Firestore
   try{
     const fsSnap=await db.collection('funcionarios').get();
     if(!fsSnap.empty){
       S.funcionarios=fsSnap.docs.map(d=>({id:d.id,...d.data()}));
     } else if(S.funcionarios.length){
-      // One-time migration: push existing employees to Firestore
       const batch=db.batch();
       S.funcionarios.forEach(f=>batch.set(db.collection('funcionarios').doc(f.id),{nome:f.nome,cargo:f.cargo||''}));
       batch.commit().catch(e=>console.warn('fs-migrate',e));
     }
-  }catch(e){console.warn('fs-load-funcs',e);}
+  }catch(e){console.warn('fs-funcs:',e);}
 }
 
 function persist(){
-  try{
-    const json=JSON.stringify({
-      contracts:S.contracts,items:S.items,bols:S.bols,prods:S.prods,
-      priceHistory:S.priceHistory,encarregados:S.encarregados,
-      funcionarios:S.funcionarios,servicos:S.servicos,cores:S.cores
+  const json=JSON.stringify({
+    contracts:S.contracts,items:S.items,bols:S.bols,prods:S.prods,
+    priceHistory:S.priceHistory,encarregados:S.encarregados,
+    funcionarios:S.funcionarios,servicos:S.servicos,cores:S.cores
+  });
+  // cache local (síncrono)
+  try{localStorage.setItem('forte_v2',json);}catch(e){}
+  // Firestore (primário, assíncrono)
+  db.collection('dados').doc('app').set({valor:json})
+    .catch(e=>{
+      console.warn('persist-fs:',e);
+      toast('Erro ao salvar (Firestore): '+e.code,'er');
     });
-    localStorage.setItem('forte_v2',json);
-    const check=localStorage.getItem('forte_v2');
-    if(check) toast('💾 SALVO: '+S.contracts.length+' contratos no storage','ok');
-    else toast('❌ FALHOU: localStorage não gravou!','er');
-  }catch(e){
-    console.error('persist error',e);
-    toast('❌ Erro ao salvar: '+e,'er');
-  }
 }
 
 /* ═══════════════════════════════════════════════════
