@@ -887,6 +887,35 @@ tr.row td:last-child{padding-right:12px}
   </div>
 </div>
 
+<!-- MODAL: FUNCIONÁRIO -->
+<div class="ov" id="ov-func">
+  <div class="drawer" style="max-width:460px">
+    <div class="dh">
+      <h2 id="func-ttl">Novo Funcionário</h2>
+      <button class="dx" onclick="closeOv('ov-func')">✕</button>
+    </div>
+    <div class="db">
+      <div class="fg"><label>Nome Completo *</label><input id="func-nome" placeholder="Nome completo" /></div>
+      <div class="fg"><label>Cargo / Função *</label>
+        <select id="func-cargo">
+          <option value="">Selecione...</option>
+          <option>Encarregado</option>
+          <option>Operador</option>
+          <option>Auxiliar</option>
+          <option>Motorista</option>
+          <option>Técnico</option>
+          <option>Outro</option>
+        </select>
+      </div>
+      <input type="hidden" id="func-id" />
+    </div>
+    <div class="df">
+      <button class="btn btn-ghost" onclick="closeOv('ov-func')">Cancelar</button>
+      <button class="btn btn-or" onclick="saveFuncionario()">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: ENCARREGADO -->
 <div class="ov" id="ov-enc">
   <div class="drawer" style="max-width:460px">
@@ -979,7 +1008,7 @@ const S = {
   cid: null,
   osid: null,
   q: '',
-  cadTab: 'encarregados',
+  cadTab: 'funcionarios',
   contracts: [],
   items: [],
   bols: [],
@@ -987,7 +1016,8 @@ const S = {
   priceHistory: [],
   encarregados: [],
   servicos: [],
-  cores: []
+  cores: [],
+  funcionarios: []
 };
 
 /* ═══════════════════════════════════════════════════
@@ -1052,6 +1082,7 @@ const SEED = {
     {id:'p1',osid:'b1',lat:'-23.594665',lng:'-46.567852',rua:'Rua Kelson',ref:'',serv:'APROXIMAÇÃO',iid:'i11',cor:'AZUL',qtd:3,comp:15,larg:0.1,m2:4.50,obs:'',pi:null,pe:null}
   ],
   encarregados:[],
+  funcionarios:[],
   servicos:[
     'FAIXA DE PEDESTRE','APROXIMAÇÃO','LOMBADA','CICLOVIA','SETA DIRECIONAL',
     'LINHA CENTRAL','LINHA DE BORDO','PALAVRA / SÍMBOLO','ESTACIONAMENTO',
@@ -1080,6 +1111,7 @@ async function loadData(){
       S.prods=d.prods||[...SEED.prods];
       S.priceHistory=d.priceHistory||[...SEED.priceHistory];
       S.encarregados=d.encarregados||[...SEED.encarregados];
+      S.funcionarios=d.funcionarios||[...SEED.funcionarios];
       S.servicos=d.servicos&&d.servicos.length?d.servicos:[...SEED.servicos];
       S.cores=d.cores&&d.cores.length?d.cores:[...SEED.cores];
     } else throw 'no data';
@@ -1090,6 +1122,7 @@ async function loadData(){
     S.prods=[...SEED.prods];
     S.priceHistory=[...SEED.priceHistory];
     S.encarregados=[...SEED.encarregados];
+    S.funcionarios=[...SEED.funcionarios];
     S.servicos=[...SEED.servicos];
     S.cores=[...SEED.cores];
   }
@@ -1100,7 +1133,7 @@ async function persist(){
     await window.storage.set('forte_v2',JSON.stringify({
       contracts:S.contracts,items:S.items,bols:S.bols,prods:S.prods,
       priceHistory:S.priceHistory,encarregados:S.encarregados,
-      servicos:S.servicos,cores:S.cores
+      funcionarios:S.funcionarios,servicos:S.servicos,cores:S.cores
     }));
   }catch(e){console.warn('storage error',e)}
 }
@@ -1946,7 +1979,8 @@ var _situacoes=['Trabalhou','Faltou','Atestado','Folga','Afastamento'];
 function _osFillDL(){
   const dl=document.getElementById('dl-enc');
   if(!dl)return;
-  dl.innerHTML=S.encarregados.map(e=>`<option value="${e.nome}">`).join('');
+  const lista=S.funcionarios.length?S.funcionarios:S.encarregados;
+  dl.innerHTML=lista.map(f=>`<option value="${f.nome}">${f.cargo?f.nome+' ('+f.cargo+')':''}</option>`).join('');
 }
 
 function _osSitClass(s){
@@ -2237,6 +2271,7 @@ function delProd(id){
 function rCadastros(){
   const tab=S.cadTab||'encarregados';
   const tabs=[
+    {key:'funcionarios',label:'Funcionários'},
     {key:'encarregados',label:'Encarregados'},
     {key:'servicos',label:'Serviços'},
     {key:'cores',label:'Cores'},
@@ -2244,7 +2279,8 @@ function rCadastros(){
   ];
   const tabHtml=`<div class="cad-tabs">${tabs.map(t=>`<button class="cad-tab${t.key===tab?' sel':''}" onclick="cadTab('${t.key}')">${t.label}</button>`).join('')}</div>`;
   let body='';
-  if(tab==='encarregados') body=cadEncarregados();
+  if(tab==='funcionarios') body=cadFuncionarios();
+  else if(tab==='encarregados') body=cadEncarregados();
   else if(tab==='servicos') body=cadServicos();
   else if(tab==='cores') body=cadCores();
   else if(tab==='itens') body=cadItens();
@@ -2252,6 +2288,59 @@ function rCadastros(){
 }
 
 function cadTab(t){S.cadTab=t;rCadastros();}
+
+function cadFuncionarios(){
+  const isAdm=S.user?.role==='adm';
+  let h=`<div class="card"><div class="card-hdr"><div class="card-ttl">Funcionários</div>${isAdm?`<button class="btn btn-or btn-sm" onclick="openAddFuncionario()">+ Novo</button>`:''}</div>`;
+  if(!S.funcionarios.length){
+    h+=`<div class="emp" style="padding:32px"><div class="et">Nenhum funcionário cadastrado</div>${isAdm?`<div class="es">Clique em "+ Novo" para adicionar</div>`:''}</div>`;
+  } else {
+    h+=`<table><thead><tr><th>Nome</th><th>Cargo / Função</th>${isAdm?'<th>Ações</th>':''}</tr></thead><tbody>`;
+    S.funcionarios.forEach(f=>{
+      h+=`<tr class="row"><td class="fw7">${f.nome}</td><td><span class="chip">${f.cargo||'—'}</span></td>${isAdm?`<td onclick="event.stopPropagation()"><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm btn-icon" onclick="openEditFuncionario('${f.id}')">✏️</button><button class="btn btn-red btn-sm btn-icon" onclick="delFuncionario('${f.id}')">🗑️</button></div></td>`:''}</tr>`;
+    });
+    h+=`</tbody></table>`;
+  }
+  return h+'</div>';
+}
+
+function openAddFuncionario(){
+  document.getElementById('func-id').value='';
+  document.getElementById('func-nome').value='';
+  document.getElementById('func-cargo').value='';
+  document.getElementById('func-ttl').textContent='Novo Funcionário';
+  openOv('ov-func');
+}
+function openEditFuncionario(id){
+  const f=S.funcionarios.find(x=>x.id===id);if(!f)return;
+  document.getElementById('func-id').value=id;
+  document.getElementById('func-nome').value=f.nome;
+  document.getElementById('func-cargo').value=f.cargo||'';
+  document.getElementById('func-ttl').textContent='Editar Funcionário';
+  openOv('ov-func');
+}
+async function saveFuncionario(){
+  const id=document.getElementById('func-id').value;
+  const nome=document.getElementById('func-nome').value.trim();
+  const cargo=document.getElementById('func-cargo').value;
+  if(!nome){toast('Informe o nome','er');return;}
+  if(!cargo){toast('Selecione o cargo','er');return;}
+  if(id){
+    const i=S.funcionarios.findIndex(x=>x.id===id);
+    S.funcionarios[i]={...S.funcionarios[i],nome,cargo};
+    toast('Funcionário atualizado');
+  } else {
+    S.funcionarios.push({id:uid(),nome,cargo});
+    toast('Funcionário adicionado');
+  }
+  await persist();closeOv('ov-func');rCadastros();
+}
+function delFuncionario(id){
+  cfm('Excluir Funcionário','Excluir este funcionário?',async()=>{
+    S.funcionarios=S.funcionarios.filter(x=>x.id!==id);
+    await persist();toast('Funcionário excluído','in');rCadastros();
+  });
+}
 
 function cadEncarregados(){
   const isAdm=S.user?.role==='adm';
