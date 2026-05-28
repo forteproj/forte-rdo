@@ -2392,11 +2392,11 @@ function cadFuncionarios(){
   if(!S.funcionarios.length){
     h+=`<div class="emp" style="padding:32px"><div class="et">Nenhum funcionário cadastrado</div>${isAdm?`<div class="es">Clique em "+ Novo" para adicionar</div>`:''}</div>`;
   } else {
-    h+=`<table><thead><tr><th>Nome</th><th>Cargo / Função</th>${isAdm?'<th>Ações</th>':''}</tr></thead><tbody>`;
+    h+=`<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table><thead><tr><th>Nome</th><th>Cargo / Função</th>${isAdm?'<th>Ações</th>':''}</tr></thead><tbody>`;
     S.funcionarios.forEach(f=>{
       h+=`<tr class="row"><td class="fw7">${f.nome}</td><td><span class="chip">${f.cargo||'—'}</span></td>${isAdm?`<td onclick="event.stopPropagation()"><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm btn-icon" onclick="openEditFuncionario('${f.id}')">✏️</button><button class="btn btn-red btn-sm btn-icon" onclick="delFuncionario('${f.id}')">🗑️</button></div></td>`:''}</tr>`;
     });
-    h+=`</tbody></table>`;
+    h+=`</tbody></table></div>`;
   }
   return h+'</div>';
 }
@@ -2451,11 +2451,11 @@ function cadEncarregados(){
   if(!S.encarregados.length){
     h+=`<div class="emp" style="padding:32px"><div class="et">Nenhum encarregado cadastrado</div>${isAdm?`<div class="es">Clique em "+ Novo" para adicionar</div>`:''}</div>`;
   } else {
-    h+=`<table><thead><tr><th>Nome</th><th>Contato</th>${isAdm?'<th>Ações</th>':''}</tr></thead><tbody>`;
+    h+=`<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table><thead><tr><th>Nome</th><th>Contato</th>${isAdm?'<th>Ações</th>':''}</tr></thead><tbody>`;
     S.encarregados.forEach(e=>{
       h+=`<tr class="row"><td class="fw7">${e.nome}</td><td style="color:var(--tx2)">${e.contato||'—'}</td>${isAdm?`<td onclick="event.stopPropagation()"><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm btn-icon" onclick="openEditEncarregado('${e.id}')">✏️</button><button class="btn btn-red btn-sm btn-icon" onclick="delEncarregado('${e.id}')">🗑️</button></div></td>`:''}</tr>`;
     });
-    h+=`</tbody></table>`;
+    h+=`</tbody></table></div>`;
   }
   return h+'</div>';
 }
@@ -2466,11 +2466,11 @@ function cadServicos(){
   if(!S.servicos.length){
     h+=`<div class="emp" style="padding:32px"><div class="et">Nenhum serviço cadastrado</div></div>`;
   } else {
-    h+=`<table><thead><tr><th>Nome do Serviço</th>${isAdm?'<th>Ações</th>':''}</tr></thead><tbody>`;
+    h+=`<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table><thead><tr><th>Nome do Serviço</th>${isAdm?'<th>Ações</th>':''}</tr></thead><tbody>`;
     S.servicos.forEach(sv=>{
       h+=`<tr class="row"><td class="fw7">${sv.nome}</td>${isAdm?`<td onclick="event.stopPropagation()"><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm btn-icon" onclick="openEditServico('${sv.id}')">✏️</button><button class="btn btn-red btn-sm btn-icon" onclick="delServico('${sv.id}')">🗑️</button></div></td>`:''}</tr>`;
     });
-    h+=`</tbody></table>`;
+    h+=`</tbody></table></div>`;
   }
   return h+'</div>';
 }
@@ -2481,11 +2481,11 @@ function cadCores(){
   if(!S.cores.length){
     h+=`<div class="emp" style="padding:32px"><div class="et">Nenhuma cor cadastrada</div></div>`;
   } else {
-    h+=`<table><thead><tr><th>Cor</th><th>Nome</th><th>Hex</th>${isAdm?'<th>Ações</th>':''}</tr></thead><tbody>`;
+    h+=`<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table><thead><tr><th>Cor</th><th>Nome</th><th>Hex</th>${isAdm?'<th>Ações</th>':''}</tr></thead><tbody>`;
     S.cores.forEach(co=>{
       h+=`<tr class="row"><td><div style="width:28px;height:28px;border-radius:6px;background:${co.hex||'#ccc'};border:1px solid var(--bd)"></div></td><td class="fw7">${co.nome}</td><td style="font-family:monospace;font-size:12px;color:var(--tx3)">${co.hex||'—'}</td>${isAdm?`<td onclick="event.stopPropagation()"><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm btn-icon" onclick="openEditCor('${co.id}')">✏️</button><button class="btn btn-red btn-sm btn-icon" onclick="delCor('${co.id}')">🗑️</button></div></td>`:''}</tr>`;
     });
-    h+=`</tbody></table>`;
+    h+=`</tbody></table></div>`;
   }
   return h+'</div>';
 }
@@ -2499,11 +2499,11 @@ function cadItens(){
     if(!its.length){
       h+=`<div style="padding:14px 18px;color:var(--tx3);font-size:13px">Nenhum item cadastrado neste contrato.</div>`;
     } else {
-      h+=`<table><thead><tr><th>Item</th><th>Unidade</th><th>Preço Unitário</th><th>Qtd Contratada</th></tr></thead><tbody>`;
+      h+=`<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table><thead><tr><th>Item</th><th>Unidade</th><th>Preço Unitário</th><th>Qtd Contratada</th></tr></thead><tbody>`;
       its.forEach(i=>{
         h+=`<tr><td style="font-size:13px;color:var(--tx)">${i.item}</td><td><span class="chip">${i.und}</span></td><td class="mono fw7">${i.unit>0?fmtR(i.unit):'—'}</td><td>${i.qtd>0?i.qtd.toLocaleString('pt-BR'):'—'}</td></tr>`;
       });
-      h+=`</tbody></table>`;
+      h+=`</tbody></table></div>`;
     }
     h+=`</div>`;
   });
