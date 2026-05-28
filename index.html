@@ -1014,8 +1014,7 @@ async function _apRead(key){
   catch(e){return[];}
 }
 async function _apWrite(key,lista){
-  try{await dbAp.collection('dados').doc(key).set({valor:JSON.stringify(lista)});console.log('ap-write OK',key);}
-  catch(e){console.error('ap-write FAIL',key,e);toast('Sync AP falhou: '+e.message,'er');}
+  await dbAp.collection('dados').doc(key).set({valor:JSON.stringify(lista)});
 }
 async function _syncObraToAp(c,del=false){
   const obras=await _apRead('obras');
@@ -1872,7 +1871,8 @@ async function saveContrato(){
   if(id){const i=S.contracts.findIndex(c=>c.id===id);S.contracts[i]={...S.contracts[i],...d};saved=S.contracts[i];toast('Contrato atualizado')}
   else{saved={id:uid(),...d};S.contracts.push(saved);toast('Contrato criado')}
   await persist();
-  _syncObraToAp(saved).catch(e=>console.warn('ap-sync',e));
+  try{await _syncObraToAp(saved);toast('Apontamentos: obra sincronizada','ok');}
+  catch(e){toast('Sync obra falhou: '+(e.message||e.code||e),'er');}
   closeOv('ov-contrato');rContratos();
 }
 
