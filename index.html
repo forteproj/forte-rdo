@@ -999,6 +999,45 @@ var authSec = firebase.initializeApp(firebaseConfig, 'sec').auth();
 var USUARIOS = db.collection('usuarios');
 var currentPerfil = null;
 
+// ─── FORTE-APONTAMENTOS (sync de obras e registros) ──────────────────────────
+var dbAp = firebase.initializeApp({
+  apiKey:'AIzaSyDJXoX-s1kD7JGLk4NATAelZzWc6m_old8',
+  authDomain:'forte-apontamentos.firebaseapp.com',
+  projectId:'forte-apontamentos',
+  storageBucket:'forte-apontamentos.firebasestorage.app',
+  messagingSenderId:'406199226933',
+  appId:'1:406199226933:web:7fea97aa201d76170c977c'
+},'ap').firestore();
+
+async function _apRead(key){
+  try{const s=await dbAp.collection('dados').doc(key).get();return s.exists?JSON.parse(s.data().valor):[];}
+  catch(e){return[];}
+}
+async function _apWrite(key,lista){
+  try{await dbAp.collection('dados').doc(key).set({valor:JSON.stringify(lista)});}
+  catch(e){console.warn('ap-write',e);}
+}
+async function _syncObraToAp(c,del=false){
+  const obras=await _apRead('obras');
+  if(del){await _apWrite('obras',obras.filter(o=>o.id!==c.id));return;}
+  const idx=obras.findIndex(o=>o.id===c.id);
+  const entry={id:c.id,nome:c.titulo,cidade:c.obra||'',uf:'',ativo:true};
+  if(idx>=0)obras[idx]=entry;else obras.push(entry);
+  await _apWrite('obras',obras);
+}
+async function _syncOSToAp(os,del=false){
+  const regs=await _apRead('regs');
+  if(del){await _apWrite('regs',regs.filter(r=>r.id!==os.id));return;}
+  const idx=regs.findIndex(r=>r.id===os.id);
+  const entry={
+    id:os.id,encId:0,obraId:os.cid,data:os.data,placa:os.placa||'',
+    funcionarios:(os.funcionarios||[]).map(f=>({nome:f.nome,entrada:f.entrada||'',saida:f.saida||'',abono:f.situacao||'Trabalhou'})),
+    obs:os.obs||'',abono:os.abono||false,abonoMotivo:os.abono?'Outro':'',fromRdo:true
+  };
+  if(idx>=0)regs[idx]=entry;else regs.push(entry);
+  await _apWrite('regs',regs);
+}
+
 /* ═══════════════════════════════════════════════════
    STATE
 ═══════════════════════════════════════════════════ */
@@ -1829,9 +1868,12 @@ async function saveContrato(){
   const id=document.getElementById('mc-id').value;
   const d={titulo:g('mc-titulo').trim(),empresa:g('mc-empresa').trim(),obra:g('mc-obra').trim(),num:g('mc-num').trim(),cont:g('mc-cont').trim(),valor:parseFloat(g('mc-valor'))||0,per:parseInt(g('mc-per'))||365,data:g('mc-data')};
   if(!d.titulo||!d.obra||!d.cont){toast('Preencha os campos obrigatórios *','er');return}
-  if(id){const i=S.contracts.findIndex(c=>c.id===id);S.contracts[i]={...S.contracts[i],...d};toast('Contrato atualizado')}
-  else{S.contracts.push({id:uid(),...d});toast('Contrato criado')}
-  await persist();closeOv('ov-contrato');rContratos();
+  let saved;
+  if(id){const i=S.contracts.findIndex(c=>c.id===id);S.contracts[i]={...S.contracts[i],...d};saved=S.contracts[i];toast('Contrato atualizado')}
+  else{saved={id:uid(),...d};S.contracts.push(saved);toast('Contrato criado')}
+  await persist();
+  _syncObraToAp(saved).catch(e=>console.warn('ap-sync',e));
+  closeOv('ov-contrato');rContratos();
 }
 
 function delContrato(id){
@@ -1843,7 +1885,10 @@ function delContrato(id){
     S.bols=S.bols.filter(b=>b.cid!==id);
     S.prods=S.prods.filter(p=>!oids.includes(p.osid));
     S.priceHistory=S.priceHistory.filter(h=>!iids.includes(h.iid));
-    await persist();toast('Contrato excluído','in');rContratos();
+    await persist();
+    _syncObraToAp({id},true).catch(e=>console.warn('ap-sync',e));
+    oids.forEach(oid=>_syncOSToAp({id:oid},true).catch(e=>console.warn('ap-sync',e)));
+    toast('Contrato excluído','in');rContratos();
   });
 }
 
@@ -1977,11 +2022,15 @@ async function saveOS(){
   if(eid){
     const i=S.bols.findIndex(b=>b.id===eid);
     S.bols[i]={...S.bols[i],...d};
-    await persist();closeOv('ov-os');toast('OS atualizada');rOS();
+    await persist();
+    _syncOSToAp(S.bols[i]).catch(e=>console.warn('ap-sync',e));
+    closeOv('ov-os');toast('OS atualizada');rOS();
   } else {
     const nb={id:uid(),...d,st:'ABERTO',by:S.user?.name};
     S.bols.push(nb);S.osid=nb.id;
-    await persist();closeOv('ov-os');nav('os',nb.id);toast('OS criada');
+    await persist();
+    _syncOSToAp(nb).catch(e=>console.warn('ap-sync',e));
+    closeOv('ov-os');nav('os',nb.id);toast('OS criada');
   }
 }
 
@@ -2068,7 +2117,9 @@ function delOS(id){
   cfm('Excluir OS','Excluir esta OS e todas as produções? Esta ação não pode ser desfeita.',async()=>{
     S.bols=S.bols.filter(b=>b.id!==id);
     S.prods=S.prods.filter(p=>p.osid!==id);
-    await persist();toast('OS excluída','in');nav('boletins');
+    await persist();
+    _syncOSToAp({id},true).catch(e=>console.warn('ap-sync',e));
+    toast('OS excluída','in');nav('boletins');
   });
 }
 
