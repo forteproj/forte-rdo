@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FORTE · RDO V2</title>
+<title>FORTE · RDO V2.1</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
 :root{
@@ -1155,10 +1155,10 @@ function _seedData(){
 
 async function loadData(){
   let loaded=false;
-  // 1. Firestore (fonte primária)
+  // 1. Firestore (fonte primária — documento do usuário)
   try{
-    const snap=await db.collection('dados').doc('app').get();
-    if(snap.exists){_applyData(JSON.parse(snap.data().valor));loaded=true;}
+    const snap=await db.collection('usuarios').doc(S.user.uid).get();
+    if(snap.exists&&snap.data().appdata){_applyData(JSON.parse(snap.data().appdata));loaded=true;}
   }catch(e){console.warn('load-fs:',e);}
   // 2. localStorage (fallback)
   if(!loaded){
@@ -1189,12 +1189,11 @@ function persist(){
   });
   // cache local (síncrono)
   try{localStorage.setItem('forte_v2',json);}catch(e){}
-  // Firestore (primário, assíncrono)
-  db.collection('dados').doc('app').set({valor:json})
-    .catch(e=>{
-      console.warn('persist-fs:',e);
-      toast('Erro ao salvar (Firestore): '+e.code,'er');
-    });
+  // Firestore (primário, assíncrono — salva no documento do usuário)
+  if(S.user?.uid){
+    db.collection('usuarios').doc(S.user.uid).update({appdata:json})
+      .catch(e=>{console.warn('persist-fs:',e);});
+  }
 }
 
 /* ═══════════════════════════════════════════════════
