@@ -1237,7 +1237,7 @@ function cfm(title,msg,cb,btnLabel='Confirmar',btnClass='btn-red'){
 function calcHoras(a,b){
   if(!a||!b)return'-';
   try{
-    const p=x=>x.split(':').map(Number);
+    const p=x=>{const pts=x.split(':').map(Number);return[pts[0]||0,pts[1]||0,pts[2]||0];};
     const [h1,m1,s1]=p(a);const[h2,m2,s2]=p(b);
     let d=(h2*3600+m2*60+s2)-(h1*3600+m1*60+s1);
     if(d<0)d+=86400;
