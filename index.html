@@ -639,6 +639,9 @@ tr.row td:last-child{padding-right:12px}
         <div class="fg"><label>Obra / Local *</label><input id="mc-obra" placeholder="CAXIAS DO SUL-RS" /></div>
         <div class="fg"><label>N° do Contrato</label><input id="mc-num" placeholder="2025/110" /></div>
       </div>
+      <div class="fr">
+        <div class="fg" style="max-width:140px"><label>Sigla da OS</label><input id="mc-sigla" placeholder="CXS" maxlength="5" style="text-transform:uppercase" /></div>
+      </div>
       <div class="fg"><label>Contratante *</label><input id="mc-cont" placeholder="MUNICIPIO DE..." /></div>
       <div class="fr">
         <div class="fg"><label>Valor do Contrato (R$) *</label><input type="number" id="mc-valor" placeholder="0.00" step="0.01" /></div>
@@ -1682,11 +1685,11 @@ function rBoletins(){
   </div>
   <div class="card"><table>
     <thead><tr>
-      <th>STATUS</th><th>CONTRATANTE</th><th>DATA</th><th>EQUIPE</th>
+      <th>STATUS</th><th>Nº OS</th><th>CONTRATANTE</th><th>DATA</th><th>EQUIPE</th>
       <th>PLACA</th><th>FUNCIONÁRIOS</th><th>INÍCIO</th><th>FIM</th><th>PROD.</th>
       <th></th>
     </tr></thead><tbody>`;
-  if(!bs.length){h+=`<tr><td colspan="10" style="text-align:center;padding:56px;color:var(--tx3)">
+  if(!bs.length){h+=`<tr><td colspan="11" style="text-align:center;padding:56px;color:var(--tx3)">
     <div style="font-size:40px;margin-bottom:12px">📋</div>
     <div style="font-size:15px;font-weight:700;color:var(--tx2)">Nenhuma OS encontrada</div>
     <div style="font-size:13px;margin-top:6px">Clique em "+ Nova OS" para criar</div>
@@ -1699,6 +1702,7 @@ function rBoletins(){
     const trabalharam=b.funcionarios?.filter(f=>f.situacao==='Trabalhou').length??nFunc;
     h+=`<tr class="row" onclick="nav('os','${b.id}')">
       <td><span class="badge ${bc}">${b.st}</span></td>
+      <td><span class="chip mono" style="font-weight:700">${b.osNum||'-'}</span></td>
       <td style="font-size:12px">${cont?.cont||'-'}</td>
       <td>${fmtD(b.data)}</td>
       <td><strong>${b.eq||'-'}</strong></td>
@@ -1738,7 +1742,7 @@ function rOS(){
   let h=`<div class="osh">
     <div class="osh-top">
       <div>
-        <div class="osh-title">${cont?.titulo||'OS'}</div>
+        <div class="osh-title">${cont?.titulo||'OS'} ${os.osNum?`<span style="font-size:13px;font-weight:600;color:var(--or);margin-left:8px">${os.osNum}</span>`:''}</div>
         <div class="osh-sub">${cont?.cont||''}</div>
       </div>
       <span class="badge ${bc2}">${os.st}</span>
@@ -1862,7 +1866,7 @@ document.addEventListener('click',e=>{
 ═══════════════════════════════════════════════════ */
 function openAddContrato(){
   Object.assign(document,{});
-  ['mc-id','mc-titulo','mc-obra','mc-num','mc-cont'].forEach(id=>document.getElementById(id).value='');
+  ['mc-id','mc-titulo','mc-obra','mc-num','mc-cont','mc-sigla'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('mc-empresa').value='FORTE';
   document.getElementById('mc-valor').value='';
   document.getElementById('mc-per').value='365';
@@ -1878,6 +1882,7 @@ function openEditContrato(id){
   document.getElementById('mc-empresa').value=c.empresa;
   document.getElementById('mc-obra').value=c.obra;
   document.getElementById('mc-num').value=c.num||'';
+  document.getElementById('mc-sigla').value=c.sigla||'';
   document.getElementById('mc-cont').value=c.cont;
   document.getElementById('mc-valor').value=c.valor;
   document.getElementById('mc-per').value=c.per;
@@ -1888,7 +1893,7 @@ function openEditContrato(id){
 
 async function saveContrato(){
   const id=document.getElementById('mc-id').value;
-  const d={titulo:g('mc-titulo').trim(),empresa:g('mc-empresa').trim(),obra:g('mc-obra').trim(),num:g('mc-num').trim(),cont:g('mc-cont').trim(),valor:parseFloat(g('mc-valor'))||0,per:parseInt(g('mc-per'))||365,data:g('mc-data')};
+  const d={titulo:g('mc-titulo').trim(),empresa:g('mc-empresa').trim(),obra:g('mc-obra').trim(),num:g('mc-num').trim(),sigla:g('mc-sigla').trim().toUpperCase(),cont:g('mc-cont').trim(),valor:parseFloat(g('mc-valor'))||0,per:parseInt(g('mc-per'))||365,data:g('mc-data')};
   if(!d.titulo||!d.obra||!d.cont){toast('Preencha os campos obrigatórios *','er');return}
   let saved;
   if(id){const i=S.contracts.findIndex(c=>c.id===id);S.contracts[i]={...S.contracts[i],...d};saved=S.contracts[i];toast('Contrato atualizado')}
@@ -2028,6 +2033,17 @@ function openEditOS(id){
   openOv('ov-os');
 }
 
+function _gerarNumOS(cid){
+  const cont=S.contracts.find(c=>c.id===cid);
+  const sigla=cont?.sigla||'OS';
+  const osDoContrato=S.bols.filter(b=>b.cid===cid&&b.osNum);
+  const max=osDoContrato.reduce((m,b)=>{
+    const n=parseInt((b.osNum||'').split('-').pop())||0;
+    return n>m?n:m;
+  },0);
+  return`${sigla}-${String(max+1).padStart(3,'0')}`;
+}
+
 async function saveOS(){
   const eid=g('os-eid');
   const cid=document.getElementById('os-cid').value;
@@ -2060,7 +2076,7 @@ async function saveOS(){
     _syncOSToAp(S.bols[i]).catch(e=>console.warn('ap-sync',e));
     closeOv('ov-os');toast('OS atualizada');rOS();
   } else {
-    const nb={id:uid(),...d,st:'ABERTO',by:S.user?.name};
+    const nb={id:uid(),...d,st:'ABERTO',by:S.user?.name,osNum:_gerarNumOS(cid)};
     S.bols.push(nb);S.osid=nb.id;
     persist();
     _syncOSToAp(nb).catch(e=>console.warn('ap-sync',e));
