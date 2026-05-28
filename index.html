@@ -1887,7 +1887,6 @@ async function saveContrato(){
   persist();
   closeOv('ov-contrato');rContratos();
   _syncObraToAp(saved)
-    .then(()=>toast('Apontamentos: obra sincronizada','ok'))
     .catch(e=>toast('Sync obra falhou: '+(e.message||e.code||e),'er'));
 }
 
