@@ -1760,7 +1760,7 @@ function rOS(){
       const sitBg=s=>s==='Trabalhou'?'var(--ds-grn-bg)':s==='Faltou'?'var(--ds-red-bg)':'var(--ds-ylw-bg)';
       return `<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)">
         <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px">EQUIPE</div>
-        <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><table style="width:100%;min-width:420px;border-collapse:collapse;font-size:12px">
           <thead><tr style="background:var(--bd2)">
             <th style="padding:6px 10px;text-align:left;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--tx3)">FUNCIONÁRIO</th>
             <th style="padding:6px 10px;text-align:center;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--tx3)">ENTRADA</th>
@@ -1776,7 +1776,7 @@ function rOS(){
             <td style="padding:8px 10px;text-align:center"><span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:3px;background:${sitBg(f.situacao)};color:${sitColor(f.situacao)}">${f.situacao||'Trabalhou'}</span></td>
           </tr>`).join('')}
           </tbody>
-        </table>
+        </table></div>
       </div>`;
     })()}
     <div class="osh-sum" style="margin-top:14px">
