@@ -1016,20 +1016,14 @@ async function _apWrite(key,lista){
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({fields:{valor:{stringValue:JSON.stringify(lista)}}})
   });
-  const body=await r.json();
-  if(!r.ok){throw new Error(r.status+': '+JSON.stringify(body).slice(0,120));}
-  const savedVal=body.fields?.valor?.stringValue;
-  const savedLen=savedVal?JSON.parse(savedVal).length:'?';
-  toast('FS gravou '+savedLen+' itens em '+key,'in');
+  if(!r.ok){const t=await r.text();throw new Error(r.status+': '+t.slice(0,120));}
 }
 async function _syncObraToAp(c,del=false){
   const obras=await _apRead('obras');
-  toast('DEBUG leu '+obras.length+' obras','in');
   if(del){await _apWrite('obras',obras.filter(o=>o.id!==c.id));return;}
   const idx=obras.findIndex(o=>o.id===c.id);
   const entry={id:c.id,nome:c.titulo,cidade:c.obra||'',uf:'',ativo:true};
   if(idx>=0)obras[idx]=entry;else obras.push(entry);
-  toast('DEBUG vai gravar '+obras.length+' obras','in');
   await _apWrite('obras',obras);
 }
 async function _syncOSToAp(os,del=false){
@@ -1214,8 +1208,8 @@ function corBg(c){const co=S.cores.find(x=>x.nome===c);return co?co.hex:'transpa
 
 function toast(msg,type='ok'){
   const t=document.getElementById('toast');
-  t.className=type;t.childNodes[1]&&t.removeChild(t.childNodes[1]);
-  t.appendChild(document.createTextNode(' '+msg));
+  t.className=type;t.textContent='';
+  t.appendChild(document.createTextNode(msg));
   t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3000);
 }
@@ -1886,8 +1880,7 @@ async function saveContrato(){
   else{saved={id:uid(),...d};S.contracts.push(saved);toast('Contrato criado')}
   persist();
   closeOv('ov-contrato');rContratos();
-  _syncObraToAp(saved)
-    .catch(e=>toast('Sync obra falhou: '+(e.message||e.code||e),'er'));
+  _syncObraToAp(saved).catch(e=>console.warn('ap-sync-obra',e));
 }
 
 function delContrato(id){
