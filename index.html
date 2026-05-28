@@ -189,65 +189,47 @@ textarea{height:80px;padding:10px 14px;resize:vertical}
 /* ══════════════════════════════════════════
    APP LAYOUT
 ══════════════════════════════════════════ */
-#app{display:none;height:100vh;background:var(--bg)}
+#app{display:none;height:100vh;background:var(--bg);flex-direction:column}
 #app.vis{display:flex}
-#sidebar{
-  width:64px;background:var(--sb);
-  display:flex;flex-direction:column;align-items:center;
-  padding:14px 0;gap:2px;flex-shrink:0;
-  border-right:1px solid rgba(255,255,255,.05);
-}
-.sb-logo{
-  width:42px;height:42px;background:var(--or);border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;font-weight:900;color:white;margin-bottom:18px;
-  box-shadow:0 4px 12px rgba(245,166,35,.4);letter-spacing:-1px;
-}
-.sb-item{
-  width:42px;height:42px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;color:rgba(255,255,255,.35);font-size:17px;
-  transition:all var(--transition);position:relative;
-}
-.sb-item:hover{background:var(--sb2);color:rgba(255,255,255,.7)}
-.sb-item.on{background:var(--or);color:white;box-shadow:0 2px 8px rgba(245,166,35,.4)}
-.sb-sep{height:1px;background:rgba(255,255,255,.08);width:32px;margin:6px 0}
-.sb-bot{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:6px}
-.sb-av{
-  width:36px;height:36px;border-radius:50%;background:var(--or);
-  color:white;font-weight:800;font-size:13px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:all var(--transition);border:2px solid rgba(255,255,255,.1);
-}
-.sb-av:hover{transform:scale(1.08)}
-#main-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
 
-/* ── TOPBAR ── */
-#topbar{
-  height:56px;background:var(--wh);
-  display:flex;align-items:center;padding:0 22px;gap:14px;
-  border-bottom:1px solid var(--bd);flex-shrink:0;
-  box-shadow:var(--sh);
-}
-.bc{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--tx3);font-weight:600}
-.bc a{color:var(--or);cursor:pointer;text-decoration:none}
-.bc a:hover{text-decoration:underline}
-.bc span{color:var(--tx3)}
-.tb-search{flex:1;max-width:340px;position:relative}
-.tb-search input{height:34px;border-radius:20px;padding-left:34px;font-size:12px}
-.tb-search::before{content:'⌕';position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--tx3);pointer-events:none}
-.tb-right{display:flex;align-items:center;gap:10px;margin-left:auto}
-.user-pill{
-  display:flex;align-items:center;gap:8px;
-  background:var(--bd2);padding:5px 12px 5px 6px;border-radius:20px;
-}
-.user-pill .dot{width:8px;height:8px;border-radius:50%;background:var(--grn);flex-shrink:0}
-.user-pill .nm{font-size:12px;font-weight:700;color:var(--tx)}
-.user-pill .rl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)}
-#btn-main-add{display:flex}
+/* ── HEADER ── */
+#header{height:52px;background:var(--ds-dark);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;}
+.h-logo{font-family:var(--font);font-size:18px;font-weight:800;letter-spacing:1px;color:var(--ds-wh);}
+.h-logo span{color:var(--or);}
+.h-right{display:flex;align-items:center;gap:8px;}
+.user-pill{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);padding:4px 10px 4px 6px;border-radius:20px;}
+.user-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--grn);flex-shrink:0;}
+.user-pill .nm{font-size:12px;font-weight:700;color:var(--ds-wh);}
+.user-pill .rl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.45);}
+#header .btn-ghost{background:rgba(255,255,255,.1);color:var(--ds-wh);border-color:rgba(255,255,255,.18);}
+#header .btn-ghost:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.3);}
+
+/* ── NAV BAR ── */
+#nav-bar{background:var(--ds-dark2);border-bottom:1px solid var(--ds-dark4);padding:0 20px;display:flex;gap:2px;flex-shrink:0;}
+.nav-btn{background:none;border:none;border-bottom:2px solid transparent;padding:10px 14px;font-family:var(--font);font-size:12px;font-weight:600;color:rgba(255,255,255,.45);cursor:pointer;transition:all .15s;letter-spacing:.03em;}
+.nav-btn:hover{color:rgba(255,255,255,.8);}
+.nav-btn.active{color:var(--or);border-bottom-color:var(--or);font-weight:700;}
+
+/* ── TOPBAR (action bar) ── */
+#topbar{height:46px;background:var(--wh);display:flex;align-items:center;padding:0 20px;gap:12px;border-bottom:1px solid var(--bd);flex-shrink:0;}
+.tb-search{flex:1;max-width:320px;position:relative;}
+.tb-search input{height:32px;border-radius:20px;padding-left:32px;font-size:12px;}
+.tb-search::before{content:'⌕';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--tx3);pointer-events:none;}
+.tb-right{display:flex;align-items:center;gap:8px;margin-left:auto;}
+#btn-main-add{display:flex;}
 
 /* ── CONTENT ── */
 #content-area{flex:1;overflow-y:auto}
+
+/* ── CADASTROS ── */
+.cad-tabs{display:flex;gap:2px;background:var(--bd2);border-radius:var(--r2);padding:3px;margin-bottom:18px;max-width:520px;}
+.cad-tab{flex:1;padding:7px 10px;background:none;border:none;border-radius:5px;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--tx3);cursor:pointer;transition:all .15s;}
+.cad-tab.sel{background:var(--sb);color:var(--or);}
+.cad-add-form{background:var(--bd2);border:1px solid var(--bd);border-radius:var(--r2);padding:16px;margin-bottom:14px;display:none;}
+.cad-add-form.open{display:block;}
+.cad-add-row{display:flex;gap:10px;align-items:flex-end;}
+.cad-add-row .fg{flex:1;margin-bottom:0;}
+.cad-cor-prev{width:32px;height:32px;border-radius:6px;border:1.5px solid var(--bd);flex-shrink:0;align-self:flex-end;}
 .page{padding:22px;display:none}
 .page.on{display:block}
 
@@ -584,44 +566,38 @@ tr.row td:last-child{padding-right:12px}
 
 <!-- ─────────────── APP ─────────────── -->
 <div id="app">
-  <!-- SIDEBAR -->
-  <div id="sidebar">
-    <div class="sb-logo">F</div>
-    <div class="sb-item on" id="sbi-contratos" onclick="nav('contratos')" title="Contratos">📄</div>
-    <div class="sb-item" id="sbi-boletins" onclick="nav('boletins')" title="Boletins / OS">📋</div>
-    <div class="sb-sep"></div>
-    <div class="sb-bot">
-      <div class="sb-av" id="sb-av" onclick="doLogout()" title="Sair do sistema">A</div>
+  <div id="header">
+    <div class="h-logo">FORTE <span>RDO</span></div>
+    <div class="h-right">
+      <div class="user-pill">
+        <span class="dot"></span>
+        <span class="nm" id="u-name">Admin</span>
+        <span class="rl" id="u-role">ADM</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="btn-usuarios" style="display:none" onclick="abrirAdmin()">👥 Usuários</button>
+      <button class="btn btn-ghost btn-sm" onclick="openChpw()">🔑</button>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Sair</button>
     </div>
   </div>
-
-  <!-- MAIN -->
-  <div id="main-area">
-    <div id="topbar">
-      <div class="bc" id="bc">
-        <a onclick="nav('contratos')">HOME</a><span>›</span><span>CONTRATOS</span>
-      </div>
-      <div class="tb-search">
-        <input type="text" placeholder="Buscar..." id="s-inp" oninput="doSearch(this.value)" />
-      </div>
-      <div class="tb-right">
-        <div class="user-pill">
-          <span class="dot"></span>
-          <span class="nm" id="u-name">Admin</span>
-          <span class="rl" id="u-role">ADM</span>
-        </div>
-        <button class="btn btn-ghost btn-sm" id="btn-usuarios" style="display:none" onclick="abrirAdmin()">👥 Usuários</button>
-        <button class="btn btn-ghost btn-sm" onclick="openChpw()">🔑 Senha</button>
-        <button class="btn btn-or btn-sm" id="btn-main-add" onclick="handleAdd()">+ Add</button>
-      </div>
+  <div id="nav-bar">
+    <button class="nav-btn active" id="nav-contratos" onclick="nav('contratos')">Contratos</button>
+    <button class="nav-btn" id="nav-boletins" onclick="nav('boletins')">Boletins / OS</button>
+    <button class="nav-btn" id="nav-cadastros" onclick="nav('cadastros')">Cadastros</button>
+  </div>
+  <div id="topbar">
+    <div class="tb-search">
+      <input type="text" placeholder="Buscar..." id="s-inp" oninput="doSearch(this.value)" />
     </div>
-
-    <div id="content-area">
-      <div class="page on" id="pg-contratos"><div id="ct-contratos"></div></div>
-      <div class="page" id="pg-itens"><div id="ct-itens"></div></div>
-      <div class="page" id="pg-boletins"><div id="ct-boletins"></div></div>
-      <div class="page" id="pg-os"><div id="ct-os"></div></div>
+    <div class="tb-right">
+      <button class="btn btn-or btn-sm" id="btn-main-add" onclick="handleAdd()">+ Add</button>
     </div>
+  </div>
+  <div id="content-area">
+    <div class="page on" id="pg-contratos"><div id="ct-contratos"></div></div>
+    <div class="page" id="pg-itens"><div id="ct-itens"></div></div>
+    <div class="page" id="pg-boletins"><div id="ct-boletins"></div></div>
+    <div class="page" id="pg-os"><div id="ct-os"></div></div>
+    <div class="page" id="pg-cadastros"><div id="ct-cadastros"></div></div>
   </div>
 </div>
 
@@ -865,6 +841,68 @@ tr.row td:last-child{padding-right:12px}
   </div>
 </div>
 
+<!-- MODAL: ENCARREGADO -->
+<div class="ov" id="ov-enc">
+  <div class="drawer" style="max-width:460px">
+    <div class="dh">
+      <h2 id="enc-ttl">Novo Encarregado</h2>
+      <button class="dx" onclick="closeOv('ov-enc')">✕</button>
+    </div>
+    <div class="db">
+      <div class="fg"><label>Nome *</label><input id="enc-nome" placeholder="Nome completo" /></div>
+      <div class="fg"><label>Contato / Telefone</label><input id="enc-contato" placeholder="(00) 90000-0000" /></div>
+      <input type="hidden" id="enc-id" />
+    </div>
+    <div class="df">
+      <button class="btn btn-ghost" onclick="closeOv('ov-enc')">Cancelar</button>
+      <button class="btn btn-or" onclick="saveEncarregado()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: SERVIÇO -->
+<div class="ov" id="ov-serv">
+  <div class="drawer" style="max-width:460px">
+    <div class="dh">
+      <h2 id="serv-ttl">Novo Serviço</h2>
+      <button class="dx" onclick="closeOv('ov-serv')">✕</button>
+    </div>
+    <div class="db">
+      <div class="fg"><label>Nome do Serviço *</label><input id="serv-nome" placeholder="Ex: FAIXA DE PEDESTRE" /></div>
+      <input type="hidden" id="serv-id" />
+    </div>
+    <div class="df">
+      <button class="btn btn-ghost" onclick="closeOv('ov-serv')">Cancelar</button>
+      <button class="btn btn-or" onclick="saveServico()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: COR -->
+<div class="ov" id="ov-cor">
+  <div class="drawer" style="max-width:460px">
+    <div class="dh">
+      <h2 id="cor-ttl">Nova Cor</h2>
+      <button class="dx" onclick="closeOv('ov-cor')">✕</button>
+    </div>
+    <div class="db">
+      <div class="fr">
+        <div class="fg"><label>Nome da Cor *</label><input id="cor-nome" placeholder="Ex: BRANCO" /></div>
+        <div class="fg"><label>Código Hex *</label><input id="cor-hex" placeholder="#FFFFFF" oninput="updCorPreview()" /></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:6px">
+        <span style="font-size:11px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Prévia:</span>
+        <div id="cor-prev" style="width:40px;height:40px;border-radius:8px;border:1.5px solid var(--bd);background:#fff;"></div>
+      </div>
+      <input type="hidden" id="cor-id" />
+    </div>
+    <div class="df">
+      <button class="btn btn-ghost" onclick="closeOv('ov-cor')">Cancelar</button>
+      <button class="btn btn-or" onclick="saveCor()">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -892,14 +930,18 @@ var currentPerfil = null;
 const S = {
   user: null,
   page: 'contratos',
-  cid: null,   // current contrato id
-  osid: null,  // current OS id
-  q: '',       // search query
+  cid: null,
+  osid: null,
+  q: '',
+  cadTab: 'encarregados',
   contracts: [],
   items: [],
   bols: [],
   prods: [],
-  priceHistory: []   // {id, iid, valor, vigencia (YYYY-MM-DD), obs}
+  priceHistory: [],
+  encarregados: [],
+  servicos: [],
+  cores: []
 };
 
 /* ═══════════════════════════════════════════════════
@@ -962,7 +1004,19 @@ const SEED = {
   ],
   prods:[
     {id:'p1',osid:'b1',lat:'-23.594665',lng:'-46.567852',rua:'Rua Kelson',ref:'',serv:'APROXIMAÇÃO',iid:'i11',cor:'AZUL',qtd:3,comp:15,larg:0.1,m2:4.50,obs:'',pi:null,pe:null}
-    /* iid:'i11' = EXTRUDADO BH — realizado 4,50 m² */
+  ],
+  encarregados:[],
+  servicos:[
+    'FAIXA DE PEDESTRE','APROXIMAÇÃO','LOMBADA','CICLOVIA','SETA DIRECIONAL',
+    'LINHA CENTRAL','LINHA DE BORDO','PALAVRA / SÍMBOLO','ESTACIONAMENTO',
+    'RETRORREFLETIVO','TACHÃO / TACHA','VERTICAL','SEMAFÓRICO','OUTROS'
+  ].map((n,i)=>({id:'sv'+(i+1),nome:n})),
+  cores:[
+    {id:'co1',nome:'BRANCO',hex:'#F3F4F6'},
+    {id:'co2',nome:'AMARELO',hex:'#F5A623'},
+    {id:'co3',nome:'AZUL',hex:'#2563EB'},
+    {id:'co4',nome:'VERMELHO',hex:'#DC2626'},
+    {id:'co5',nome:'VERDE',hex:'#059669'}
   ]
 };
 
@@ -979,6 +1033,9 @@ async function loadData(){
       S.bols=d.bols||[...SEED.bols];
       S.prods=d.prods||[...SEED.prods];
       S.priceHistory=d.priceHistory||[...SEED.priceHistory];
+      S.encarregados=d.encarregados||[...SEED.encarregados];
+      S.servicos=d.servicos&&d.servicos.length?d.servicos:[...SEED.servicos];
+      S.cores=d.cores&&d.cores.length?d.cores:[...SEED.cores];
     } else throw 'no data';
   }catch(e){
     S.contracts=[...SEED.contracts];
@@ -986,13 +1043,18 @@ async function loadData(){
     S.bols=[...SEED.bols];
     S.prods=[...SEED.prods];
     S.priceHistory=[...SEED.priceHistory];
+    S.encarregados=[...SEED.encarregados];
+    S.servicos=[...SEED.servicos];
+    S.cores=[...SEED.cores];
   }
 }
 
 async function persist(){
   try{
     await window.storage.set('forte_v2',JSON.stringify({
-      contracts:S.contracts,items:S.items,bols:S.bols,prods:S.prods,priceHistory:S.priceHistory
+      contracts:S.contracts,items:S.items,bols:S.bols,prods:S.prods,
+      priceHistory:S.priceHistory,encarregados:S.encarregados,
+      servicos:S.servicos,cores:S.cores
     }));
   }catch(e){console.warn('storage error',e)}
 }
@@ -1005,7 +1067,7 @@ const today=()=>new Date().toISOString().split('T')[0];
 const fmtR=(v)=>'R$\u00a0'+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtD=(d)=>{if(!d)return'-';const[y,m,dd]=d.split('-');return`${dd}/${m}/${y}`};
 const pct=(a,b)=>b>0?Math.min(100,a/b*100):0;
-const corBg=c=>({BRANCO:'#F3F4F6',AMARELO:'#F5A623',AZUL:'#2563EB',VERMELHO:'#DC2626',VERDE:'#059669'}[c]||'transparent');
+function corBg(c){const co=S.cores.find(x=>x.nome===c);return co?co.hex:'transparent';}
 
 function toast(msg,type='ok'){
   const t=document.getElementById('toast');
@@ -1086,11 +1148,11 @@ function afterLogin() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').classList.add('vis');
   document.getElementById('u-name').textContent = currentPerfil.nome;
-  document.getElementById('u-role').textContent = isAdm ? 'ADM' : 'ENCARREGADO';
-  document.getElementById('sb-av').textContent = currentPerfil.nome.charAt(0).toUpperCase();
+  document.getElementById('u-role').textContent = isAdm ? 'ADM' : 'ENC';
   document.getElementById('btn-usuarios').style.display = isAdm ? '' : 'none';
   if (!isAdm) {
-    document.getElementById('sbi-contratos').style.display = 'none';
+    document.getElementById('nav-contratos').style.display = 'none';
+    document.getElementById('nav-cadastros').style.display = 'none';
     nav('boletins');
   } else {
     nav('contratos');
@@ -1263,34 +1325,34 @@ function doChpw() {
    NAVIGATION
 ═══════════════════════════════════════════════════ */
 function nav(page,id){
-  document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('on'));
-  const sbiKey={contratos:'contratos',itens:'contratos',boletins:'boletins',os:'boletins'}[page]||page;
-  const sbi=document.getElementById('sbi-'+sbiKey);
-  if(sbi)sbi.classList.add('on');
+  document.querySelectorAll('.nav-btn').forEach(e=>e.classList.remove('active'));
+  const navKey={contratos:'contratos',itens:'contratos',boletins:'boletins',os:'boletins',cadastros:'cadastros'}[page]||page;
+  const nb=document.getElementById('nav-'+navKey);
+  if(nb)nb.classList.add('active');
   document.querySelectorAll('.page').forEach(e=>e.classList.remove('on'));
   document.getElementById('pg-'+page).classList.add('on');
   S.page=page;
   if(id){if(page==='itens')S.cid=id;if(page==='os')S.osid=id}
   updTopbar(page);
-  ({contratos:rContratos,itens:rItens,boletins:rBoletins,os:rOS}[page]||rContratos)();
+  ({contratos:rContratos,itens:rItens,boletins:rBoletins,os:rOS,cadastros:rCadastros}[page]||rContratos)();
 }
 
 function updTopbar(p){
-  const bc=document.getElementById('bc');
   const btn=document.getElementById('btn-main-add');
+  const topbar=document.getElementById('topbar');
   const isAdm=S.user?.role==='adm';
   const cfg={
-    contratos:{bc:`<a onclick="nav('contratos')">HOME</a><span>›</span><span>CONTRATOS</span>`,add:'+ Add Contrato',show:isAdm},
-    itens:{bc:`<a onclick="nav('contratos')">HOME</a><span>›</span><a onclick="nav('contratos')">CONTRATOS</a><span>›</span><span>ITENS POR CONTRATO</span>`,add:'+ Add Item',show:isAdm},
-    boletins:{bc:`<a onclick="nav('boletins')">HOME</a><span>›</span><span>BOLETIM DE MEDIÇÕES</span>`,add:'+ Nova OS',show:true},
-    os:{bc:`<a onclick="nav('boletins')">BOLETINS</a><span>›</span><span>DETALHE OS</span>`,add:'+ Produção',show:false},
+    contratos:{add:'+ Add Contrato',show:isAdm},
+    itens:{add:'+ Add Item',show:isAdm},
+    boletins:{add:'+ Nova OS',show:true},
+    os:{add:'+ Produção',show:false},
+    cadastros:{add:'',show:false},
   };
   const c=cfg[p]||cfg.contratos;
-  bc.innerHTML=c.bc;
   btn.textContent=c.add;
+  topbar.style.display=p==='cadastros'?'none':'';
   if(p==='os'){
     const os=S.bols.find(b=>b.id===S.osid);
-    const isAdm=S.user?.role==='adm';
     const isOwner=os?.eq?.toLowerCase()===S.user?.name?.toLowerCase()||os?.by?.toLowerCase()===S.user?.name?.toLowerCase();
     btn.style.display=(os?.st==='ABERTO'&&(isAdm||isOwner))?'':'none';
   } else {
@@ -1303,7 +1365,7 @@ function handleAdd(){
   (m[S.page]||openAddContrato)();
 }
 
-function doSearch(v){S.q=v.toLowerCase();({contratos:rContratos,itens:rItens,boletins:rBoletins}[S.page]||rContratos)()}
+function doSearch(v){S.q=v.toLowerCase();if(S.page==='cadastros')return;({contratos:rContratos,itens:rItens,boletins:rBoletins}[S.page]||rContratos)()}
 
 /* ═══════════════════════════════════════════════════
    RENDER: CONTRATOS
@@ -1850,12 +1912,24 @@ function prevPhoto(boxId, dataId, inp){
   r.readAsDataURL(inp.files[0]);
 }
 
+function fillServCores(){
+  const serv=document.getElementById('mp-serv');
+  const cor=document.getElementById('mp-cor');
+  const sv=serv.value;
+  const cv=cor.value;
+  serv.innerHTML='<option value="">Selecione...</option>'+S.servicos.map(s=>`<option value="${s.nome}">${s.nome}</option>`).join('');
+  cor.innerHTML='<option value="">-</option>'+S.cores.map(c=>`<option value="${c.nome}">${c.nome}</option>`).join('');
+  if(sv)serv.value=sv;
+  if(cv)cor.value=cv;
+}
+
 function openAddProd(){
   const os=S.bols.find(b=>b.id===S.osid);
   if(!os)return;
   if(os.st!=='ABERTO'){toast('OS encerrada. Reabra para adicionar produções.','er');return}
   document.getElementById('mp-id').value='';
   document.getElementById('mp-osid').value=S.osid;
+  fillServCores();
   ['mp-lat','mp-lng','mp-rua','mp-ref','mp-obs'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('mp-serv').value='';
   document.getElementById('mp-cor').value='';
@@ -1879,6 +1953,7 @@ function openAddProd(){
 
 function openEditProd(id){
   const p=S.prods.find(x=>x.id===id);if(!p)return;
+  fillServCores();
   document.getElementById('mp-id').value=p.id;
   document.getElementById('mp-osid').value=p.osid;
   document.getElementById('mp-lat').value=p.lat||'';
@@ -1980,6 +2055,212 @@ function delProd(id){
     if(p){const it=S.items.findIndex(i=>i.id===p.iid);if(it>=0){const qty=parseFloat(p.m2||0)||p.qtd||0;S.items[it].real=Math.max(0,(S.items[it].real||0)-qty)}}
     S.prods=S.prods.filter(x=>x.id!==id);
     await persist();toast('Produção excluída','in');rOS();
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   CADASTROS
+═══════════════════════════════════════════════════ */
+function rCadastros(){
+  const tab=S.cadTab||'encarregados';
+  const tabs=[
+    {key:'encarregados',label:'Encarregados'},
+    {key:'servicos',label:'Serviços'},
+    {key:'cores',label:'Cores'},
+    {key:'itens',label:'Itens do Contrato'}
+  ];
+  const tabHtml=`<div class="cad-tabs">${tabs.map(t=>`<button class="cad-tab${t.key===tab?' sel':''}" onclick="cadTab('${t.key}')">${t.label}</button>`).join('')}</div>`;
+  let body='';
+  if(tab==='encarregados') body=cadEncarregados();
+  else if(tab==='servicos') body=cadServicos();
+  else if(tab==='cores') body=cadCores();
+  else if(tab==='itens') body=cadItens();
+  document.getElementById('ct-cadastros').innerHTML=`<div style="padding:22px">${tabHtml}${body}</div>`;
+}
+
+function cadTab(t){S.cadTab=t;rCadastros();}
+
+function cadEncarregados(){
+  const isAdm=S.user?.role==='adm';
+  let h=`<div class="card"><div class="card-hdr"><div class="card-ttl">Encarregados</div>${isAdm?`<button class="btn btn-or btn-sm" onclick="openAddEncarregado()">+ Novo</button>`:''}</div>`;
+  if(!S.encarregados.length){
+    h+=`<div class="emp" style="padding:32px"><div class="et">Nenhum encarregado cadastrado</div>${isAdm?`<div class="es">Clique em "+ Novo" para adicionar</div>`:''}</div>`;
+  } else {
+    h+=`<table><thead><tr><th>Nome</th><th>Contato</th>${isAdm?'<th>Ações</th>':''}</tr></thead><tbody>`;
+    S.encarregados.forEach(e=>{
+      h+=`<tr class="row"><td class="fw7">${e.nome}</td><td style="color:var(--tx2)">${e.contato||'—'}</td>${isAdm?`<td onclick="event.stopPropagation()"><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm btn-icon" onclick="openEditEncarregado('${e.id}')">✏️</button><button class="btn btn-red btn-sm btn-icon" onclick="delEncarregado('${e.id}')">🗑️</button></div></td>`:''}</tr>`;
+    });
+    h+=`</tbody></table>`;
+  }
+  return h+'</div>';
+}
+
+function cadServicos(){
+  const isAdm=S.user?.role==='adm';
+  let h=`<div class="card"><div class="card-hdr"><div class="card-ttl">Serviços</div>${isAdm?`<button class="btn btn-or btn-sm" onclick="openAddServico()">+ Novo</button>`:''}</div>`;
+  if(!S.servicos.length){
+    h+=`<div class="emp" style="padding:32px"><div class="et">Nenhum serviço cadastrado</div></div>`;
+  } else {
+    h+=`<table><thead><tr><th>Nome do Serviço</th>${isAdm?'<th>Ações</th>':''}</tr></thead><tbody>`;
+    S.servicos.forEach(sv=>{
+      h+=`<tr class="row"><td class="fw7">${sv.nome}</td>${isAdm?`<td onclick="event.stopPropagation()"><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm btn-icon" onclick="openEditServico('${sv.id}')">✏️</button><button class="btn btn-red btn-sm btn-icon" onclick="delServico('${sv.id}')">🗑️</button></div></td>`:''}</tr>`;
+    });
+    h+=`</tbody></table>`;
+  }
+  return h+'</div>';
+}
+
+function cadCores(){
+  const isAdm=S.user?.role==='adm';
+  let h=`<div class="card"><div class="card-hdr"><div class="card-ttl">Cores</div>${isAdm?`<button class="btn btn-or btn-sm" onclick="openAddCor()">+ Nova</button>`:''}</div>`;
+  if(!S.cores.length){
+    h+=`<div class="emp" style="padding:32px"><div class="et">Nenhuma cor cadastrada</div></div>`;
+  } else {
+    h+=`<table><thead><tr><th>Cor</th><th>Nome</th><th>Hex</th>${isAdm?'<th>Ações</th>':''}</tr></thead><tbody>`;
+    S.cores.forEach(co=>{
+      h+=`<tr class="row"><td><div style="width:28px;height:28px;border-radius:6px;background:${co.hex||'#ccc'};border:1px solid var(--bd)"></div></td><td class="fw7">${co.nome}</td><td style="font-family:monospace;font-size:12px;color:var(--tx3)">${co.hex||'—'}</td>${isAdm?`<td onclick="event.stopPropagation()"><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm btn-icon" onclick="openEditCor('${co.id}')">✏️</button><button class="btn btn-red btn-sm btn-icon" onclick="delCor('${co.id}')">🗑️</button></div></td>`:''}</tr>`;
+    });
+    h+=`</tbody></table>`;
+  }
+  return h+'</div>';
+}
+
+function cadItens(){
+  const isAdm=S.user?.role==='adm';
+  let h='';
+  S.contracts.forEach(c=>{
+    const its=S.items.filter(i=>i.cid===c.id);
+    h+=`<div class="card" style="margin-bottom:14px"><div class="card-hdr"><div class="card-ttl">${c.titulo}</div>${isAdm?`<button class="btn btn-ghost btn-sm" onclick="nav('itens','${c.id}')">Gerenciar →</button>`:''}</div>`;
+    if(!its.length){
+      h+=`<div style="padding:14px 18px;color:var(--tx3);font-size:13px">Nenhum item cadastrado neste contrato.</div>`;
+    } else {
+      h+=`<table><thead><tr><th>Item</th><th>Unidade</th><th>Preço Unitário</th><th>Qtd Contratada</th></tr></thead><tbody>`;
+      its.forEach(i=>{
+        h+=`<tr><td style="font-size:13px;color:var(--tx)">${i.item}</td><td><span class="chip">${i.und}</span></td><td class="mono fw7">${i.unit>0?fmtR(i.unit):'—'}</td><td>${i.qtd>0?i.qtd.toLocaleString('pt-BR'):'—'}</td></tr>`;
+      });
+      h+=`</tbody></table>`;
+    }
+    h+=`</div>`;
+  });
+  if(!S.contracts.length) h=`<div class="emp"><div class="ei">📋</div><div class="et">Nenhum contrato cadastrado</div></div>`;
+  return h;
+}
+
+/* ── CRUD: ENCARREGADOS ── */
+function openAddEncarregado(){
+  document.getElementById('enc-id').value='';
+  document.getElementById('enc-nome').value='';
+  document.getElementById('enc-contato').value='';
+  document.getElementById('enc-ttl').textContent='Novo Encarregado';
+  openOv('ov-enc');
+}
+function openEditEncarregado(id){
+  const e=S.encarregados.find(x=>x.id===id);if(!e)return;
+  document.getElementById('enc-id').value=id;
+  document.getElementById('enc-nome').value=e.nome;
+  document.getElementById('enc-contato').value=e.contato||'';
+  document.getElementById('enc-ttl').textContent='Editar Encarregado';
+  openOv('ov-enc');
+}
+async function saveEncarregado(){
+  const id=document.getElementById('enc-id').value;
+  const nome=document.getElementById('enc-nome').value.trim();
+  const contato=document.getElementById('enc-contato').value.trim();
+  if(!nome){toast('Informe o nome','er');return;}
+  if(id){
+    const i=S.encarregados.findIndex(x=>x.id===id);
+    S.encarregados[i]={...S.encarregados[i],nome,contato};
+    toast('Encarregado atualizado');
+  } else {
+    S.encarregados.push({id:uid(),nome,contato});
+    toast('Encarregado adicionado');
+  }
+  await persist();closeOv('ov-enc');rCadastros();
+}
+function delEncarregado(id){
+  cfm('Excluir Encarregado','Excluir este encarregado?',async()=>{
+    S.encarregados=S.encarregados.filter(x=>x.id!==id);
+    await persist();toast('Encarregado excluído','in');rCadastros();
+  });
+}
+
+/* ── CRUD: SERVIÇOS ── */
+function openAddServico(){
+  document.getElementById('serv-id').value='';
+  document.getElementById('serv-nome').value='';
+  document.getElementById('serv-ttl').textContent='Novo Serviço';
+  openOv('ov-serv');
+}
+function openEditServico(id){
+  const sv=S.servicos.find(x=>x.id===id);if(!sv)return;
+  document.getElementById('serv-id').value=id;
+  document.getElementById('serv-nome').value=sv.nome;
+  document.getElementById('serv-ttl').textContent='Editar Serviço';
+  openOv('ov-serv');
+}
+async function saveServico(){
+  const id=document.getElementById('serv-id').value;
+  const nome=document.getElementById('serv-nome').value.trim().toUpperCase();
+  if(!nome){toast('Informe o nome do serviço','er');return;}
+  if(id){
+    const i=S.servicos.findIndex(x=>x.id===id);
+    S.servicos[i]={...S.servicos[i],nome};
+    toast('Serviço atualizado');
+  } else {
+    S.servicos.push({id:uid(),nome});
+    toast('Serviço adicionado');
+  }
+  await persist();closeOv('ov-serv');rCadastros();
+}
+function delServico(id){
+  cfm('Excluir Serviço','Excluir este serviço?',async()=>{
+    S.servicos=S.servicos.filter(x=>x.id!==id);
+    await persist();toast('Serviço excluído','in');rCadastros();
+  });
+}
+
+/* ── CRUD: CORES ── */
+function openAddCor(){
+  document.getElementById('cor-id').value='';
+  document.getElementById('cor-nome').value='';
+  document.getElementById('cor-hex').value='';
+  document.getElementById('cor-prev').style.background='#fff';
+  document.getElementById('cor-ttl').textContent='Nova Cor';
+  openOv('ov-cor');
+}
+function openEditCor(id){
+  const co=S.cores.find(x=>x.id===id);if(!co)return;
+  document.getElementById('cor-id').value=id;
+  document.getElementById('cor-nome').value=co.nome;
+  document.getElementById('cor-hex').value=co.hex||'';
+  document.getElementById('cor-prev').style.background=co.hex||'#fff';
+  document.getElementById('cor-ttl').textContent='Editar Cor';
+  openOv('ov-cor');
+}
+function updCorPreview(){
+  const hex=document.getElementById('cor-hex').value.trim();
+  document.getElementById('cor-prev').style.background=hex||'#fff';
+}
+async function saveCor(){
+  const id=document.getElementById('cor-id').value;
+  const nome=document.getElementById('cor-nome').value.trim().toUpperCase();
+  const hex=document.getElementById('cor-hex').value.trim();
+  if(!nome){toast('Informe o nome da cor','er');return;}
+  if(!hex){toast('Informe o código hex','er');return;}
+  if(id){
+    const i=S.cores.findIndex(x=>x.id===id);
+    S.cores[i]={...S.cores[i],nome,hex};
+    toast('Cor atualizada');
+  } else {
+    S.cores.push({id:uid(),nome,hex});
+    toast('Cor adicionada');
+  }
+  await persist();closeOv('ov-cor');rCadastros();
+}
+function delCor(id){
+  cfm('Excluir Cor','Excluir esta cor?',async()=>{
+    S.cores=S.cores.filter(x=>x.id!==id);
+    await persist();toast('Cor excluída','in');rCadastros();
   });
 }
 
