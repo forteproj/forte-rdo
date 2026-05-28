@@ -1134,19 +1134,11 @@ const SEED = {
 /* ═══════════════════════════════════════════════════
    STORAGE
 ═══════════════════════════════════════════════════ */
-if(!window.storage){
-  window.storage={
-    get:async(k)=>({value:localStorage.getItem(k)}),
-    set:async(k,v)=>localStorage.setItem(k,v),
-    remove:async(k)=>localStorage.removeItem(k)
-  };
-}
-
 async function loadData(){
   try{
-    const r=await window.storage.get('forte_v2');
-    if(r&&r.value){
-      const d=JSON.parse(r.value);
+    const raw=localStorage.getItem('forte_v2');
+    if(raw){
+      const d=JSON.parse(raw);
       S.contracts=d.contracts||[...SEED.contracts];
       S.items=d.items||[...SEED.items];
       S.bols=d.bols||[...SEED.bols];
@@ -1156,7 +1148,7 @@ async function loadData(){
       S.funcionarios=d.funcionarios||[...SEED.funcionarios];
       S.servicos=d.servicos&&d.servicos.length?d.servicos:[...SEED.servicos];
       S.cores=d.cores&&d.cores.length?d.cores:[...SEED.cores];
-    } else throw 'no data';
+    } else throw 'empty';
   }catch(e){
     S.contracts=[...SEED.contracts];
     S.items=[...SEED.items];
@@ -1182,17 +1174,16 @@ async function loadData(){
   }catch(e){console.warn('fs-load-funcs',e);}
 }
 
-async function persist(){
+function persist(){
   try{
-    const payload=JSON.stringify({
+    localStorage.setItem('forte_v2',JSON.stringify({
       contracts:S.contracts,items:S.items,bols:S.bols,prods:S.prods,
       priceHistory:S.priceHistory,encarregados:S.encarregados,
       funcionarios:S.funcionarios,servicos:S.servicos,cores:S.cores
-    });
-    await window.storage.set('forte_v2',payload);
+    }));
   }catch(e){
-    console.error('storage error',e);
-    toast('Erro ao salvar localmente: '+e,'er');
+    console.error('persist error',e);
+    toast('Erro ao salvar: '+e,'er');
   }
 }
 
@@ -1878,10 +1869,11 @@ async function saveContrato(){
   let saved;
   if(id){const i=S.contracts.findIndex(c=>c.id===id);S.contracts[i]={...S.contracts[i],...d};saved=S.contracts[i];toast('Contrato atualizado')}
   else{saved={id:uid(),...d};S.contracts.push(saved);toast('Contrato criado')}
-  await persist();
-  try{await _syncObraToAp(saved);toast('Apontamentos: obra sincronizada','ok');}
-  catch(e){toast('Sync obra falhou: '+(e.message||e.code||e),'er');}
+  persist();
   closeOv('ov-contrato');rContratos();
+  _syncObraToAp(saved)
+    .then(()=>toast('Apontamentos: obra sincronizada','ok'))
+    .catch(e=>toast('Sync obra falhou: '+(e.message||e.code||e),'er'));
 }
 
 function delContrato(id){
@@ -1893,7 +1885,7 @@ function delContrato(id){
     S.bols=S.bols.filter(b=>b.cid!==id);
     S.prods=S.prods.filter(p=>!oids.includes(p.osid));
     S.priceHistory=S.priceHistory.filter(h=>!iids.includes(h.iid));
-    await persist();
+    persist();
     _syncObraToAp({id},true).catch(e=>console.warn('ap-sync',e));
     oids.forEach(oid=>_syncOSToAp({id:oid},true).catch(e=>console.warn('ap-sync',e)));
     toast('Contrato excluído','in');rContratos();
@@ -1946,13 +1938,13 @@ async function saveItem(){
     if(d.unit>0) S.priceHistory.push({id:uid(),iid:newId,valor:d.unit,vigencia:today(),obs:'Preço inicial do item'});
     toast('Item adicionado');
   }
-  await persist();closeOv('ov-item');rItens();
+  persist();closeOv('ov-item');rItens();
 }
 
 function delItem(id){
   cfm('Excluir Item','Excluir este item do contrato?',async()=>{
     S.items=S.items.filter(i=>i.id!==id);
-    await persist();toast('Item excluído','in');rItens();
+    persist();toast('Item excluído','in');rItens();
   });
 }
 
@@ -2030,13 +2022,13 @@ async function saveOS(){
   if(eid){
     const i=S.bols.findIndex(b=>b.id===eid);
     S.bols[i]={...S.bols[i],...d};
-    await persist();
+    persist();
     _syncOSToAp(S.bols[i]).catch(e=>console.warn('ap-sync',e));
     closeOv('ov-os');toast('OS atualizada');rOS();
   } else {
     const nb={id:uid(),...d,st:'ABERTO',by:S.user?.name};
     S.bols.push(nb);S.osid=nb.id;
-    await persist();
+    persist();
     _syncOSToAp(nb).catch(e=>console.warn('ap-sync',e));
     closeOv('ov-os');nav('os',nb.id);toast('OS criada');
   }
@@ -2115,7 +2107,7 @@ async function chgSt(id,st){
     const i=S.bols.findIndex(b=>b.id===id);
     S.bols[i].st=st;
     if(st==='FINALIZADO'&&!S.bols[i].fim) S.bols[i].fim=new Date().toTimeString().substr(0,8);
-    await persist();
+    persist();
     toast(`OS ${st.toLowerCase()}`,st==='ABERTO'?'in':st==='CONFIRMADO'?'ok':'in');
     rOS();
   },btn,cls);
@@ -2125,7 +2117,7 @@ function delOS(id){
   cfm('Excluir OS','Excluir esta OS e todas as produções? Esta ação não pode ser desfeita.',async()=>{
     S.bols=S.bols.filter(b=>b.id!==id);
     S.prods=S.prods.filter(p=>p.osid!==id);
-    await persist();
+    persist();
     _syncOSToAp({id},true).catch(e=>console.warn('ap-sync',e));
     toast('OS excluída','in');nav('boletins');
   });
@@ -2324,7 +2316,7 @@ async function saveProd(){
     if(it>=0){const qty=d.m2>0?d.m2:d.qtd;S.items[it].real=(S.items[it].real||0)+qty}
     toast('Produção registrada ✅');
   }
-  await persist();closeOv('ov-prod');rOS();
+  persist();closeOv('ov-prod');rOS();
 }
 
 function delProd(id){
@@ -2332,7 +2324,7 @@ function delProd(id){
     const p=S.prods.find(x=>x.id===id);
     if(p){const it=S.items.findIndex(i=>i.id===p.iid);if(it>=0){const qty=parseFloat(p.m2||0)||p.qtd||0;S.items[it].real=Math.max(0,(S.items[it].real||0)-qty)}}
     S.prods=S.prods.filter(x=>x.id!==id);
-    await persist();toast('Produção excluída','in');rOS();
+    persist();toast('Produção excluída','in');rOS();
   });
 }
 
@@ -2406,14 +2398,14 @@ async function saveFuncionario(){
     S.funcionarios.push({id:fid,nome,cargo});
     toast('Funcionário adicionado');
   }
-  await persist();
+  persist();
   db.collection('funcionarios').doc(fid).set({nome,cargo}).catch(e=>console.warn('fs-sync',e));
   closeOv('ov-func');rCadastros();
 }
 function delFuncionario(id){
   cfm('Excluir Funcionário','Excluir este funcionário?',async()=>{
     S.funcionarios=S.funcionarios.filter(x=>x.id!==id);
-    await persist();
+    persist();
     db.collection('funcionarios').doc(id).delete().catch(e=>console.warn('fs-sync',e));
     toast('Funcionário excluído','in');rCadastros();
   });
@@ -2514,12 +2506,12 @@ async function saveEncarregado(){
     S.encarregados.push({id:uid(),nome,contato});
     toast('Encarregado adicionado');
   }
-  await persist();closeOv('ov-enc');rCadastros();
+  persist();closeOv('ov-enc');rCadastros();
 }
 function delEncarregado(id){
   cfm('Excluir Encarregado','Excluir este encarregado?',async()=>{
     S.encarregados=S.encarregados.filter(x=>x.id!==id);
-    await persist();toast('Encarregado excluído','in');rCadastros();
+    persist();toast('Encarregado excluído','in');rCadastros();
   });
 }
 
@@ -2549,12 +2541,12 @@ async function saveServico(){
     S.servicos.push({id:uid(),nome});
     toast('Serviço adicionado');
   }
-  await persist();closeOv('ov-serv');rCadastros();
+  persist();closeOv('ov-serv');rCadastros();
 }
 function delServico(id){
   cfm('Excluir Serviço','Excluir este serviço?',async()=>{
     S.servicos=S.servicos.filter(x=>x.id!==id);
-    await persist();toast('Serviço excluído','in');rCadastros();
+    persist();toast('Serviço excluído','in');rCadastros();
   });
 }
 
@@ -2594,12 +2586,12 @@ async function saveCor(){
     S.cores.push({id:uid(),nome,hex});
     toast('Cor adicionada');
   }
-  await persist();closeOv('ov-cor');rCadastros();
+  persist();closeOv('ov-cor');rCadastros();
 }
 function delCor(id){
   cfm('Excluir Cor','Excluir esta cor?',async()=>{
     S.cores=S.cores.filter(x=>x.id!==id);
-    await persist();toast('Cor excluída','in');rCadastros();
+    persist();toast('Cor excluída','in');rCadastros();
   });
 }
 
@@ -2681,7 +2673,7 @@ async function savePreco(iid){
   // Atualizar item.unit para refletir o preço atual
   const it=S.items.findIndex(i=>i.id===iid);
   if(it>=0) S.items[it].unit=currentPrice(iid,today());
-  await persist();
+  persist();
   toast(`Preço atualizado → ${fmtR(val)} a partir de ${fmtD(vig)}`);
   openPrecoHistory(iid);
 }
@@ -2691,7 +2683,7 @@ async function delPreco(phid,iid){
     S.priceHistory=S.priceHistory.filter(h=>h.id!==phid);
     const it=S.items.findIndex(i=>i.id===iid);
     if(it>=0) S.items[it].unit=currentPrice(iid,today());
-    await persist();toast('Registro removido','in');
+    persist();toast('Registro removido','in');
     openPrecoHistory(iid);
   });
 }
