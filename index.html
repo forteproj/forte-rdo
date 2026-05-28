@@ -1014,8 +1014,8 @@ async function _apRead(key){
   catch(e){return[];}
 }
 async function _apWrite(key,lista){
-  try{await dbAp.collection('dados').doc(key).set({valor:JSON.stringify(lista)});}
-  catch(e){console.warn('ap-write',e);}
+  try{await dbAp.collection('dados').doc(key).set({valor:JSON.stringify(lista)});console.log('ap-write OK',key);}
+  catch(e){console.error('ap-write FAIL',key,e);toast('Sync AP falhou: '+e.message,'er');}
 }
 async function _syncObraToAp(c,del=false){
   const obras=await _apRead('obras');
